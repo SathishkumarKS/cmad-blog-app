@@ -24,7 +24,7 @@ public class CompanyClient {
         Key<Company> companyId = dao.save(acme);
         System.out.println("companyId = " + companyId);
 */
-        CompanyService companyService = new CompanyServiceImpl(new CompanyDAO(Company.class, datastore));
+        CompanyService companyService = new CompanyServiceImpl(new CompanyDAO(datastore));
 //        String acmeId = companyService.registerCompany("Acme Inc", "Site1", "acme", "IT");
 //        String ciscoId = companyService.registerCompany("CISCO", "Blogger", "blogs", "IT");
         System.out.println("companyService.getSites(ciscoId) = " + companyService.getSites("571d8f20d4a3fd35a649c2ec"));

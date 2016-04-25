@@ -16,7 +16,7 @@ import io.vertx.ext.web.handler.StaticHandler;
  * Created by satkuppu on 4/25/16.
  */
 public class BlogVerticle extends AbstractVerticle {
-    CompanyService companyService = new CompanyServiceImpl(new CompanyDAO(Company.class, new MorphiaService().getDatastore()));
+    CompanyService companyService = new CompanyServiceImpl(new CompanyDAO(new MorphiaService().getDatastore()));
 
     @Override
     public void start(Future<Void> startFuture) throws Exception {

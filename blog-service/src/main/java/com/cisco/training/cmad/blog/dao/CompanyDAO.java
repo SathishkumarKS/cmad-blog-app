@@ -9,7 +9,7 @@ import org.mongodb.morphia.dao.BasicDAO;
  * Created by satkuppu on 4/23/16.
  */
 public class CompanyDAO extends BasicDAO<Company, ObjectId> {
-    public CompanyDAO(Class<Company> entityClass, Datastore ds) {
-        super(entityClass, ds);
+    public CompanyDAO(Datastore ds) {
+        super(ds);
     }
 }
