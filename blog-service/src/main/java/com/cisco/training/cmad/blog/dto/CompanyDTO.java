@@ -8,6 +8,6 @@ import lombok.Data;
  */
 @Data @AllArgsConstructor
 public class CompanyDTO {
-    private String companyId;
+    private String id;
     private String companyName;
 }

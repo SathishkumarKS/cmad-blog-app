@@ -11,6 +11,6 @@ import lombok.Data;
 public class DepartmentDTO {
     private String companyId;
     private String siteId;
-    private String departmentId;
-    private String departmentName;
+    private String id;
+    private String deptName;
 }
