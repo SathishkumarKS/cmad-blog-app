@@ -24,6 +24,8 @@ public class BlogVerticle extends AbstractVerticle {
         Router router = Router.router(vertx);
         router.route("/assets/*").handler(StaticHandler.create("assets"));
         router.get("/api/companies").handler(this::getAllCompanies);
+        router.get("/api/companies/:companyId/sites").handler(this::getSites);
+        router.get("/api/companies/:companyId/sites/:siteId/departments").handler(this::getDepartments);
 
         // Create the HTTP server and pass the "accept" method to the request handler.
         vertx.createHttpServer()
@@ -45,5 +47,22 @@ public class BlogVerticle extends AbstractVerticle {
         routingContext.response()
                 .putHeader("content-type", "application/json; charset=utf-8")
                 .end(Json.encodePrettily(companyService.getAllCompanies()));
+    }
+
+    private void getSites(RoutingContext routingContext) {
+        String companyId = routingContext.request().getParam("companyId");
+        routingContext.response()
+                .putHeader("content-type", "application/json; charset=utf-8")
+                .end(Json.encodePrettily(companyService.getSites(companyId)));
+
+    }
+
+    private void getDepartments(RoutingContext routingContext) {
+        String companyId = routingContext.request().getParam("companyId");
+        String siteId = routingContext.request().getParam("siteId");
+        routingContext.response()
+                .putHeader("content-type", "application/json; charset=utf-8")
+                .end(Json.encodePrettily(companyService.getDepartments(companyId, siteId)));
+
     }
 }
