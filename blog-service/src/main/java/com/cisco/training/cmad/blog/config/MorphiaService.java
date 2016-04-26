@@ -17,8 +17,7 @@ public class MorphiaService {
         // we us MongoClient to connect the local host (127.0.0.1)
         // (assuming this is where your mongodb instance is running)
         // on port 27017 (the default port)
-        MongoClient mongoClient = new MongoClient("127.0.0.1:27017");
-
+        MongoClient mongoClient = new MongoClient("172.16.133.132", 27017);
         //create a new morphia instance
         this.morphia = new Morphia();
         String databaseName = "blogs";

@@ -1,33 +1,34 @@
 package com.cisco.training.cmad.blog.clients;
 
+import com.cisco.training.cmad.blog.config.BlogModule;
 import com.cisco.training.cmad.blog.config.MorphiaService;
 import com.cisco.training.cmad.blog.dao.CompanyDAO;
 import com.cisco.training.cmad.blog.model.Company;
+import com.cisco.training.cmad.blog.model.Department;
+import com.cisco.training.cmad.blog.model.Site;
 import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.CompanyServiceImpl;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
+import lombok.Data;
 import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Key;
 
 /**
  * Created by satkuppu on 4/23/16.
  */
 public class CompanyClient {
 
-    public static void main(String[] args) {
-        Datastore datastore = new MorphiaService().getDatastore();
+    @Inject
+    private CompanyService companyService;
 
-/*
-        Department dept = new Department("IT");
-        Site acmeSite = new Site("Site1").addDepartment(dept);
-        Company acme = new Company("Acme Inc");
-        acme.setSubDomain("acme");
-        acme.addSite(acmeSite);
-        Key<Company> companyId = dao.save(acme);
-        System.out.println("companyId = " + companyId);
-*/
-        CompanyService companyService = new CompanyServiceImpl(new CompanyDAO(datastore));
-//        String acmeId = companyService.registerCompany("Acme Inc", "Site1", "acme", "IT");
-//        String ciscoId = companyService.registerCompany("CISCO", "Blogger", "blogs", "IT");
-        System.out.println("companyService.getSites(ciscoId) = " + companyService.getSites("571d8f20d4a3fd35a649c2ec"));
+    public CompanyClient() {
+        Guice.createInjector(new BlogModule()).injectMembers(this);
+    }
+
+    public static void main(String[] args) {
+        new CompanyClient().addCompany();
+//        System.out.println("companyService.getSites(ciscoId) = " + companyService.getSites("571d8f20d4a3fd35a649c2ec"));
 
 /*
         System.out.println("companyService.getSites() = " + companyService.getSites("571d0df6d4a3fd2bc5df969d"));
@@ -42,5 +43,18 @@ public class CompanyClient {
 
         System.out.println("mySite = " + mySite);
 */
+    }
+
+    public void addCompany() {
+        Department dept = new Department("Consulting");
+        Department dept1 = new Department("Engineering");
+        Site indiaSite = new Site("India").withSubDomain("in").addDepartment(dept).addDepartment(dept1);
+        Site ukSite = new Site("Germany").withSubDomain("de").addDepartment(dept).addDepartment(dept1);
+        Company softwareAG = new Company("Software AG");
+        softwareAG.addSite(indiaSite);
+        softwareAG.addSite(ukSite);
+
+        String companyId = companyService.registerCompany(softwareAG);
+        System.out.println("companyId = " + companyId);
     }
 }

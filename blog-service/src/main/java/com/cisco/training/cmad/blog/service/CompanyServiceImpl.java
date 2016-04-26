@@ -7,6 +7,7 @@ import com.cisco.training.cmad.blog.dto.SiteDTO;
 import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.model.Department;
 import com.cisco.training.cmad.blog.model.Site;
+import com.google.inject.Inject;
 import com.mongodb.DuplicateKeyException;
 import org.bson.types.ObjectId;
 
@@ -21,14 +22,22 @@ public class CompanyServiceImpl implements CompanyService {
 
     private CompanyDAO companyDAO;
 
+    @Inject
     public CompanyServiceImpl(CompanyDAO companyDAO) {
         this.companyDAO = companyDAO;
     }
 
     @Override
+    public String registerCompany(Company company) {
+        return companyDAO.save(company).toString();
+    }
+
+    @Override
     public String registerCompany(String companyName, String siteName, String subDomain, String departmentName) {
         Department dept = new Department(departmentName);
-        Site acmeSite = new Site(siteName, subDomain).addDepartment(dept);
+        Site acmeSite = new Site(siteName)
+                            .withSubDomain(subDomain)
+                            .addDepartment(dept);
         Company acme = new Company(companyName).addSite(acmeSite);
 
         try {

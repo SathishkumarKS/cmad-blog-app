@@ -1,10 +1,13 @@
 package com.cisco.training.cmad.blog.verticle;
 
+import com.cisco.training.cmad.blog.config.BlogModule;
 import com.cisco.training.cmad.blog.config.MorphiaService;
 import com.cisco.training.cmad.blog.dao.CompanyDAO;
 import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.CompanyServiceImpl;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.json.Json;
@@ -16,10 +19,14 @@ import io.vertx.ext.web.handler.StaticHandler;
  * Created by satkuppu on 4/25/16.
  */
 public class BlogVerticle extends AbstractVerticle {
-    CompanyService companyService = new CompanyServiceImpl(new CompanyDAO(new MorphiaService().getDatastore()));
+    @Inject
+    private CompanyService companyService;
 
     @Override
     public void start(Future<Void> startFuture) throws Exception {
+
+        Guice.createInjector(new BlogModule()).injectMembers(this);
+
         // Create a router object.
         Router router = Router.router(vertx);
         router.route("/assets/*").handler(StaticHandler.create("assets"));

@@ -19,7 +19,7 @@ public class Site {
     @Getter @Setter @NonNull
     private String name;
 
-    @Getter @Setter
+    @Getter
     private String subDomain;
 
     @Embedded
@@ -28,11 +28,16 @@ public class Site {
     public Site() {
     }
 
-    public Site(String name, String subDomain) {
+    public Site(String name) {
         this.id = new ObjectId();
         this.name = name;
         this.subDomain = subDomain;
         this.departments = new HashMap<>();
+    }
+
+    public Site withSubDomain(String subDomain) {
+        this.subDomain = subDomain;
+        return this;
     }
 
     public Site addDepartment(Department department) {
