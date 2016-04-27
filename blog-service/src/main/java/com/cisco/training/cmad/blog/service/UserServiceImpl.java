@@ -1,11 +1,13 @@
 package com.cisco.training.cmad.blog.service;
 
 import com.cisco.training.cmad.blog.dao.UserDAO;
+import com.cisco.training.cmad.blog.dto.UserAuthDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
 import com.cisco.training.cmad.blog.model.User;
 import com.cisco.training.cmad.blog.model.UserDepartment;
 import com.google.inject.Inject;
 import org.bson.types.ObjectId;
+import org.mindrot.jbcrypt.BCrypt;
 import org.mongodb.morphia.Key;
 
 /**
@@ -22,7 +24,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String registerUser(UserRegistrationDTO userRegistration) {
-        User user = new User(userRegistration.getUserName(), userRegistration.getPassword(), userRegistration.getEmail());
+        String hashedPassword = BCrypt.hashpw(userRegistration.getPassword(), BCrypt.gensalt());
+
+        User user = new User(userRegistration.getUserName(), hashedPassword, userRegistration.getEmail());
         user.setFirstName(userRegistration.getFirst());
         user.setLastName(userRegistration.getLast());
         UserDepartment userDepartment = new UserDepartment(
@@ -34,5 +38,14 @@ public class UserServiceImpl implements UserService {
         System.out.println("user = " + user);
         Key<User> userId = userDAO.save(user);
         return userId.toString();
+    }
+
+    @Override
+    public Boolean authenticateUser(UserAuthDTO userAuthDTO) {
+        User user = userDAO.getByUserName(userAuthDTO.getUserName());
+        if (BCrypt.checkpw(userAuthDTO.getPassword(), user.getPassword()))
+            return Boolean.TRUE;
+        else
+            return Boolean.FALSE;
     }
 }

@@ -19,6 +19,9 @@ public class UserDepartment {
     private ObjectId departmentId;
     private String departmentName;
 
+    public UserDepartment() {
+    }
+
     public UserDepartment(ObjectId companyId, ObjectId siteId, ObjectId departmentId) {
         this.companyId = companyId;
         this.siteId = siteId;

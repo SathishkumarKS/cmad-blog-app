@@ -3,6 +3,7 @@ package com.cisco.training.cmad.blog.clients;
 import com.cisco.training.cmad.blog.config.BlogModule;
 import com.cisco.training.cmad.blog.config.MorphiaService;
 import com.cisco.training.cmad.blog.dao.UserDAO;
+import com.cisco.training.cmad.blog.dto.UserAuthDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
 import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.UserService;
@@ -21,7 +22,7 @@ public class UserClient {
         Guice.createInjector(new BlogModule()).injectMembers(this);    }
 
     public static void main(String[] args) {
-        new UserClient().registerUser();
+        new UserClient().authUser();
     }
 
     private void registerUser() {
@@ -38,5 +39,12 @@ public class UserClient {
         userRegistration.setDeptId("571dff893c3ed49615899091");
         userRegistration.setDeptName("");
         userService.registerUser(userRegistration);
+    }
+
+    private void authUser() {
+        UserAuthDTO userAuthDTO = new UserAuthDTO();
+        userAuthDTO.setUserName("Jafardeen");
+        userAuthDTO.setPassword("sag_123");
+        System.out.println(userService.authenticateUser(userAuthDTO));
     }
 }
