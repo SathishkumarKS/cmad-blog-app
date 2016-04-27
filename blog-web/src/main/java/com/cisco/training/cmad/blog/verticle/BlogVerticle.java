@@ -7,6 +7,7 @@ import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
 import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.CompanyServiceImpl;
+import com.cisco.training.cmad.blog.service.UserService;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import io.vertx.core.AbstractVerticle;
@@ -26,6 +27,8 @@ import io.vertx.ext.web.sstore.LocalSessionStore;
 public class BlogVerticle extends AbstractVerticle {
     @Inject
     private CompanyService companyService;
+    @Inject
+    private UserService userService;
 
     @Override
     public void start(Future<Void> startFuture) throws Exception {
@@ -70,7 +73,9 @@ public class BlogVerticle extends AbstractVerticle {
     private void registerUser(RoutingContext routingContext) {
         String jSonString = routingContext.getBodyAsString();
         UserRegistrationDTO reg = Json.decodeValue(jSonString, UserRegistrationDTO.class);
-        System.out.println("reg = " + reg);
+        String userId = userService.registerUser(reg);
+        System.out.println("userId = " + userId);
+        routingContext.response().setStatusCode(201).end();
     }
 
     private void getAllCompanies(RoutingContext routingContext) {

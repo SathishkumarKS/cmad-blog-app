@@ -4,6 +4,7 @@ import com.cisco.training.cmad.blog.dao.UserDAO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
 import com.cisco.training.cmad.blog.model.User;
 import com.cisco.training.cmad.blog.model.UserDepartment;
+import com.google.inject.Inject;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
 
@@ -14,6 +15,7 @@ public class UserServiceImpl implements UserService {
 
     private UserDAO userDAO;
 
+    @Inject
     public UserServiceImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
@@ -29,6 +31,7 @@ public class UserServiceImpl implements UserService {
                 new ObjectId(userRegistration.getDeptId()));
 
         user.worksAtDepartment(userDepartment);
+        System.out.println("user = " + user);
         Key<User> userId = userDAO.save(user);
         return userId.toString();
     }
