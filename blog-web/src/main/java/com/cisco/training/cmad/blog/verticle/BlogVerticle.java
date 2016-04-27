@@ -3,6 +3,7 @@ package com.cisco.training.cmad.blog.verticle;
 import com.cisco.training.cmad.blog.config.BlogModule;
 import com.cisco.training.cmad.blog.config.MorphiaService;
 import com.cisco.training.cmad.blog.dao.CompanyDAO;
+import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
 import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.CompanyServiceImpl;
@@ -13,7 +14,11 @@ import io.vertx.core.Future;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CookieHandler;
+import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.ext.web.sstore.LocalSessionStore;
 
 /**
  * Created by satkuppu on 4/25/16.
@@ -29,10 +34,22 @@ public class BlogVerticle extends AbstractVerticle {
 
         // Create a router object.
         Router router = Router.router(vertx);
-        router.route("/assets/*").handler(StaticHandler.create("assets"));
-        router.get("/api/companies").handler(this::getAllCompanies);
-        router.get("/api/companies/:companyId/sites").handler(this::getSites);
-        router.get("/api/companies/:companyId/sites/:siteId/departments").handler(this::getDepartments);
+        router.get("/Services/rest/company").handler(this::getAllCompanies);
+        router.get("/Services/rest/company/:companyId/sites").handler(this::getSites);
+        router.get("/Services/rest/company/:companyId/sites/:siteId/departments").handler(this::getDepartments);
+
+        router.route().handler(BodyHandler.create());
+        router.post("/Services/rest/user/register").handler(this::registerUser);
+
+        router.route().handler(StaticHandler.create().setCachingEnabled(true)::handle);
+
+        /* Session Handler */
+        router.route().handler(CookieHandler.create());
+        router.route().handler(SessionHandler
+                .create(LocalSessionStore.create(vertx))
+                .setCookieHttpOnlyFlag(true)
+                .setCookieSecureFlag(true)
+                .setSessionTimeout(30*60*1000)); //30 minutes
 
         // Create the HTTP server and pass the "accept" method to the request handler.
         vertx.createHttpServer()
@@ -48,6 +65,12 @@ public class BlogVerticle extends AbstractVerticle {
                             }
                         }
                 );
+    }
+
+    private void registerUser(RoutingContext routingContext) {
+        String jSonString = routingContext.getBodyAsString();
+        UserRegistrationDTO reg = Json.decodeValue(jSonString, UserRegistrationDTO.class);
+        System.out.println("reg = " + reg);
     }
 
     private void getAllCompanies(RoutingContext routingContext) {
