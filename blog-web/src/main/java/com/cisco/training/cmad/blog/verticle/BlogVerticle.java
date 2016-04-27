@@ -3,6 +3,7 @@ package com.cisco.training.cmad.blog.verticle;
 import com.cisco.training.cmad.blog.config.BlogModule;
 import com.cisco.training.cmad.blog.config.MorphiaService;
 import com.cisco.training.cmad.blog.dao.CompanyDAO;
+import com.cisco.training.cmad.blog.dto.UserAuthDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
 import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.service.CompanyService;
@@ -43,6 +44,7 @@ public class BlogVerticle extends AbstractVerticle {
 
         router.route().handler(BodyHandler.create());
         router.post("/Services/rest/user/register").handler(this::registerUser);
+        router.post("/Services/rest/user/auth").handler(this::authenticateUser);
 
         router.route().handler(StaticHandler.create().setCachingEnabled(true)::handle);
 
@@ -71,8 +73,8 @@ public class BlogVerticle extends AbstractVerticle {
     }
 
     private void registerUser(RoutingContext routingContext) {
-        String jSonString = routingContext.getBodyAsString();
-        UserRegistrationDTO reg = Json.decodeValue(jSonString, UserRegistrationDTO.class);
+        String payload = routingContext.getBodyAsString();
+        UserRegistrationDTO reg = Json.decodeValue(payload, UserRegistrationDTO.class);
         String userId = userService.registerUser(reg);
         System.out.println("userId = " + userId);
         routingContext.response().setStatusCode(201).end();
@@ -99,5 +101,17 @@ public class BlogVerticle extends AbstractVerticle {
                 .putHeader("content-type", "application/json; charset=utf-8")
                 .end(Json.encodePrettily(companyService.getDepartments(companyId, siteId)));
 
+    }
+
+    private void authenticateUser(RoutingContext routingContext) {
+        String payload = routingContext.getBodyAsString();
+        UserAuthDTO userAuthDTO = Json.decodeValue(payload, UserAuthDTO.class);
+        userService.authenticateUser(userAuthDTO);
+
+        if(userService.authenticateUser(userAuthDTO)) {
+            routingContext.response().setStatusCode(200).end();
+        } else {
+            routingContext.response().setStatusCode(401).end();
+        }
     }
 }

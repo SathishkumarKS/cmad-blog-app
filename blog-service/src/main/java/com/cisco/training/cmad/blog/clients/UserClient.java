@@ -22,10 +22,10 @@ public class UserClient {
         Guice.createInjector(new BlogModule()).injectMembers(this);    }
 
     public static void main(String[] args) {
-        new UserClient().authUser();
+        new UserClient().registerUser().authUser();
     }
 
-    private void registerUser() {
+    private UserClient registerUser() {
         UserRegistrationDTO userRegistration = new UserRegistrationDTO();
         userRegistration.setUserName("krishyn");
         userRegistration.setPassword("Cisco_123");
@@ -39,6 +39,7 @@ public class UserClient {
         userRegistration.setDeptId("571dff893c3ed49615899091");
         userRegistration.setDeptName("");
         userService.registerUser(userRegistration);
+        return this;
     }
 
     private void authUser() {
