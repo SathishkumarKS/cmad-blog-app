@@ -5,10 +5,14 @@ import com.google.inject.Inject;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.dao.BasicDAO;
-import org.mongodb.morphia.dao.DAO;
 
 /**
- * Created by satkuppu on 25/04/16.
+ * Created by satkuppu on 27/04/16.
  */
-public interface UserDAO extends DAO<User, ObjectId> {
+public class UserDAOImpl extends BasicDAO<User, ObjectId> implements UserDAO {
+
+    @Inject
+    public UserDAOImpl(Datastore ds) {
+        super(ds);
+    }
 }

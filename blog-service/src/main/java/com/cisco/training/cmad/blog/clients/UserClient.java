@@ -1,24 +1,36 @@
 package com.cisco.training.cmad.blog.clients;
 
+import com.cisco.training.cmad.blog.config.BlogModule;
 import com.cisco.training.cmad.blog.config.MorphiaService;
 import com.cisco.training.cmad.blog.dao.UserDAO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
+import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.UserService;
 import com.cisco.training.cmad.blog.service.UserServiceImpl;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
 
 /**
  * Created by satkuppu on 25/04/16.
  */
 public class UserClient {
+    @Inject
+    private UserService userService;
+
+    public UserClient() {
+        Guice.createInjector(new BlogModule()).injectMembers(this);    }
 
     public static void main(String[] args) {
-        UserService userService = new UserServiceImpl(new UserDAO(new MorphiaService().getDatastore()));
+        new UserClient().registerUser();
+    }
+
+    private void registerUser() {
         UserRegistrationDTO userRegistration = new UserRegistrationDTO();
-        userRegistration.setUserName("satkuppu");
+        userRegistration.setUserName("krishyn");
         userRegistration.setPassword("Cisco_123");
-        userRegistration.setEmail("satkuppu@cisco.com");
-        userRegistration.setFirst("Sathishkumar");
-        userRegistration.setLast("Kuppuswami");
+        userRegistration.setEmail("krishyn@cisco.com");
+        userRegistration.setFirst("Krishnan");
+        userRegistration.setLast("Yn");
         userRegistration.setCompanyId("571dff893c3ed49615899095");
         userRegistration.setCompanyName("");
         userRegistration.setSiteId("571dff893c3ed49615899093");
