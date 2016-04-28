@@ -46,11 +46,17 @@ public class CompanyClient {
     }
 
     public void addCompany() {
-        Department dept = new Department("Consulting");
-        Department dept1 = new Department("Engineering");
-        Site indiaSite = new Site("India").withSubDomain("in").addDepartment(dept).addDepartment(dept1);
-        Site ukSite = new Site("Germany").withSubDomain("de").addDepartment(dept).addDepartment(dept1);
-        Company softwareAG = new Company("Software AG");
+        Department hrDept = new Department("HR");
+        Department salesDept = new Department("Sales");
+        Department enggDept = new Department("Engineering");
+        Site indiaSite = new Site("India").withSubDomain("in")
+                .addDepartment(hrDept)
+                .addDepartment(salesDept)
+                .addDepartment(enggDept);
+        Site ukSite = new Site("US").withSubDomain("com")
+                .addDepartment(hrDept)
+                .addDepartment(enggDept);
+        Company softwareAG = new Company("CISCO");
         softwareAG.addSite(indiaSite);
         softwareAG.addSite(ukSite);
 

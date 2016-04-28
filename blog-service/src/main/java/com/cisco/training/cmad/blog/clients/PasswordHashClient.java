@@ -2,6 +2,8 @@ package com.cisco.training.cmad.blog.clients;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.Optional;
+
 /**
  * Created by satkuppu on 27/04/16.
  */
@@ -15,5 +17,8 @@ public class PasswordHashClient {
             System.out.println("It matches");
         else
             System.out.println("It does not match");
+
+        Optional<String> name = Optional.of(null);
+        name.map(n -> "Hello, " + n);
     }
 }

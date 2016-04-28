@@ -3,9 +3,11 @@ package com.cisco.training.cmad.blog.service;
 import com.cisco.training.cmad.blog.dao.UserDAO;
 import com.cisco.training.cmad.blog.dto.UserAuthDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
+import com.cisco.training.cmad.blog.exception.UserAlreadyExistsException;
 import com.cisco.training.cmad.blog.model.User;
 import com.cisco.training.cmad.blog.model.UserDepartment;
 import com.google.inject.Inject;
+import com.mongodb.DuplicateKeyException;
 import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import org.mongodb.morphia.Key;
@@ -23,21 +25,29 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String registerUser(UserRegistrationDTO userRegistration) {
-        String hashedPassword = BCrypt.hashpw(userRegistration.getPassword(), BCrypt.gensalt());
+    public String registerUser(UserRegistrationDTO userRegistration) throws UserAlreadyExistsException{
+        final String userName = userRegistration.getUserName();
+        User user = userDAO.getByUserName(userName);
+        if(user == null) {
+            String hashedPassword = BCrypt.hashpw(userRegistration.getPassword(), BCrypt.gensalt());
 
-        User user = new User(userRegistration.getUserName(), hashedPassword, userRegistration.getEmail());
-        user.setFirstName(userRegistration.getFirst());
-        user.setLastName(userRegistration.getLast());
-        UserDepartment userDepartment = new UserDepartment(
-                new ObjectId(userRegistration.getCompanyId()),
-                new ObjectId(userRegistration.getSiteId()),
-                new ObjectId(userRegistration.getDeptId()));
+            user = new User(userName, hashedPassword, userRegistration.getEmail());
+            user.setFirstName(userRegistration.getFirst());
+            user.setLastName(userRegistration.getLast());
 
-        user.worksAtDepartment(userDepartment);
-        System.out.println("user = " + user);
-        Key<User> userId = userDAO.save(user);
-        return userId.toString();
+            UserDepartment userDepartment = new UserDepartment(
+                    new ObjectId(userRegistration.getCompanyId()),
+                    new ObjectId(userRegistration.getSiteId()),
+                    new ObjectId(userRegistration.getDeptId()));
+            userDepartment.setCompanyName(userRegistration.getCompanyName());
+            userDepartment.setSiteName(userRegistration.getSiteName());
+            userDepartment.setDepartmentName(userRegistration.getDeptName());
+
+            user.worksAtDepartment(userDepartment);
+            Key<User> userId = userDAO.save(user);
+            return userId.getId().toString();
+        }
+        throw new UserAlreadyExistsException("User with userName " + userName + " already exists");
     }
 
     @Override

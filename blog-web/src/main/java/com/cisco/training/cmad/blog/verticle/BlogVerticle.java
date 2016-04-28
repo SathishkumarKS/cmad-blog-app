@@ -1,18 +1,19 @@
 package com.cisco.training.cmad.blog.verticle;
 
 import com.cisco.training.cmad.blog.config.BlogModule;
-import com.cisco.training.cmad.blog.config.MorphiaService;
-import com.cisco.training.cmad.blog.dao.CompanyDAO;
+import com.cisco.training.cmad.blog.dto.SiteDTO;
 import com.cisco.training.cmad.blog.dto.UserAuthDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
-import com.cisco.training.cmad.blog.model.Company;
+import com.cisco.training.cmad.blog.exception.DataNotFoundException;
+import com.cisco.training.cmad.blog.exception.UserAlreadyExistsException;
 import com.cisco.training.cmad.blog.service.CompanyService;
-import com.cisco.training.cmad.blog.service.CompanyServiceImpl;
 import com.cisco.training.cmad.blog.service.UserService;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -21,6 +22,9 @@ import io.vertx.ext.web.handler.CookieHandler;
 import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.sstore.LocalSessionStore;
+
+import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
  * Created by satkuppu on 4/25/16.
@@ -54,7 +58,7 @@ public class BlogVerticle extends AbstractVerticle {
                 .create(LocalSessionStore.create(vertx))
                 .setCookieHttpOnlyFlag(true)
                 .setCookieSecureFlag(true)
-                .setSessionTimeout(30*60*1000)); //30 minutes
+                .setSessionTimeout(1800000L)); //30 minutes
 
         // Create the HTTP server and pass the "accept" method to the request handler.
         vertx.createHttpServer()
@@ -75,30 +79,70 @@ public class BlogVerticle extends AbstractVerticle {
     private void registerUser(RoutingContext routingContext) {
         String payload = routingContext.getBodyAsString();
         UserRegistrationDTO reg = Json.decodeValue(payload, UserRegistrationDTO.class);
-        String userId = userService.registerUser(reg);
-        System.out.println("userId = " + userId);
-        routingContext.response().setStatusCode(201).end();
+        vertx.executeBlocking(future -> {
+            try {
+                String userId = userService.registerUser(reg);
+                future.complete(userId);
+            } catch(Throwable e) {
+                future.fail(e);
+            }
+        }, res -> {
+            if(res.succeeded()) {
+                routingContext.response().setStatusCode(HttpResponseStatus.CREATED.code()).end(res.result().toString());
+            } else {
+                if(res.cause() instanceof UserAlreadyExistsException) {
+                    routingContext.response()
+                            .setStatusCode(HttpResponseStatus.UNAUTHORIZED.code())
+                            .end(res.cause().getMessage());
+                } else {
+                    routingContext.response()
+                            .setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
+                            .end(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
+                }
+            }
+        });
     }
 
     private void getAllCompanies(RoutingContext routingContext) {
         routingContext.response()
-                .putHeader("content-type", "application/json; charset=utf-8")
+                .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .end(Json.encodePrettily(companyService.getAllCompanies()));
     }
 
     private void getSites(RoutingContext routingContext) {
         String companyId = routingContext.request().getParam("companyId");
-        routingContext.response()
-                .putHeader("content-type", "application/json; charset=utf-8")
-                .end(Json.encodePrettily(companyService.getSites(companyId)));
-
+        vertx.executeBlocking(future -> {
+            try {
+                List<SiteDTO> sites = companyService.getSites(companyId);
+                future.complete(sites);
+            } catch(DataNotFoundException e) {
+                future.fail(e);
+            }
+        }, res -> {
+            if(res.succeeded()) {
+                routingContext.response()
+                        .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .setStatusCode(HttpResponseStatus.OK.code())
+                        .end(Json.encodePrettily(res.result()));
+            } else {
+                if(res.cause() instanceof DataNotFoundException) {
+                    routingContext.response()
+                            .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
+                            .end(res.cause().getMessage());
+                } else {
+                    routingContext.response()
+                            .setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
+                            .end(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
+                }
+            }
+        });
     }
 
     private void getDepartments(RoutingContext routingContext) {
         String companyId = routingContext.request().getParam("companyId");
         String siteId = routingContext.request().getParam("siteId");
         routingContext.response()
-                .putHeader("content-type", "application/json; charset=utf-8")
+                .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .end(Json.encodePrettily(companyService.getDepartments(companyId, siteId)));
 
     }
@@ -109,9 +153,13 @@ public class BlogVerticle extends AbstractVerticle {
         userService.authenticateUser(userAuthDTO);
 
         if(userService.authenticateUser(userAuthDTO)) {
-            routingContext.response().setStatusCode(200).end();
+            routingContext.response()
+                    .setStatusCode(HttpResponseStatus.OK.code())
+                    .end();
         } else {
-            routingContext.response().setStatusCode(401).end();
+            routingContext.response()
+                    .setStatusCode(HttpResponseStatus.UNAUTHORIZED.code())
+                    .end(HttpResponseStatus.UNAUTHORIZED.reasonPhrase());
         }
     }
 }

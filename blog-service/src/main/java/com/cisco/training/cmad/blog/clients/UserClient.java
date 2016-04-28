@@ -21,11 +21,11 @@ public class UserClient {
     public UserClient() {
         Guice.createInjector(new BlogModule()).injectMembers(this);    }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         new UserClient().registerUser().authUser();
     }
 
-    private UserClient registerUser() {
+    private UserClient registerUser() throws Exception {
         UserRegistrationDTO userRegistration = new UserRegistrationDTO();
         userRegistration.setUserName("krishyn");
         userRegistration.setPassword("Cisco_123");
