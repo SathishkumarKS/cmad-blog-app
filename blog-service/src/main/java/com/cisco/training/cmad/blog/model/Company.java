@@ -1,5 +1,6 @@
 package com.cisco.training.cmad.blog.model;
 
+import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import org.mongodb.morphia.annotations.Indexed;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by satkuppu on 4/23/16.
@@ -35,6 +37,7 @@ public class Company {
     }
 
     public Company(String name) {
+        Preconditions.checkNotNull(name, "Company name can't be empty");
         this.name = name;
         this.sites = new HashMap<>();
     }
@@ -46,12 +49,12 @@ public class Company {
         return this;
     }
 
-    public Collection<Site> getSites() {
-        return this.sites.values();
+    public Optional<Map<ObjectId, Site>> getSites() {
+        return Optional.ofNullable(this.sites);
     }
 
-    public Site getSite(ObjectId siteId) {
-        return this.sites.get(siteId);
+    public Optional<Site> getSite(ObjectId siteId) {
+        return Optional.ofNullable(this.sites.get(siteId));
     }
 
 }

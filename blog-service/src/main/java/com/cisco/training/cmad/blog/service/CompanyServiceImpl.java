@@ -4,6 +4,8 @@ import com.cisco.training.cmad.blog.dao.CompanyDAO;
 import com.cisco.training.cmad.blog.dto.CompanyDTO;
 import com.cisco.training.cmad.blog.dto.DepartmentDTO;
 import com.cisco.training.cmad.blog.dto.SiteDTO;
+import com.cisco.training.cmad.blog.exception.DataNotFoundException;
+import com.cisco.training.cmad.blog.mapper.CompanyMapper;
 import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.model.Department;
 import com.cisco.training.cmad.blog.model.Site;
@@ -11,9 +13,9 @@ import com.google.inject.Inject;
 import com.mongodb.DuplicateKeyException;
 import org.bson.types.ObjectId;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 /**
  * Created by satkuppu on 4/24/16.
@@ -21,10 +23,12 @@ import java.util.stream.Collectors;
 public class CompanyServiceImpl implements CompanyService {
 
     private CompanyDAO companyDAO;
+    private CompanyMapper companyMapper;
 
     @Inject
-    public CompanyServiceImpl(CompanyDAO companyDAO) {
+    public CompanyServiceImpl(CompanyDAO companyDAO, CompanyMapper companyMapper) {
         this.companyDAO = companyDAO;
+        this.companyMapper = companyMapper;
     }
 
     @Override
@@ -36,8 +40,8 @@ public class CompanyServiceImpl implements CompanyService {
     public String registerCompany(String companyName, String siteName, String subDomain, String departmentName) {
         Department dept = new Department(departmentName);
         Site acmeSite = new Site(siteName)
-                            .withSubDomain(subDomain)
-                            .addDepartment(dept);
+                .withSubDomain(subDomain)
+                .addDepartment(dept);
         Company acme = new Company(companyName).addSite(acmeSite);
 
         try {
@@ -50,27 +54,53 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<CompanyDTO> getAllCompanies() {
-        return this.companyDAO.find().asList().stream().map(company -> {
-            return new CompanyDTO(company.getId().toString(), company.getName());
-        }).collect(Collectors.toCollection(ArrayList<CompanyDTO>::new));
+        return companyMapper.toCompanyDTOList(this.companyDAO.find().asList());
     }
 
     private Company getCompany(String companyId) {
-        return companyDAO.findOne("id", new ObjectId(companyId));
+        return Optional.ofNullable(companyDAO.findOne("id", new ObjectId(companyId)))
+                .orElseThrow(new Supplier<RuntimeException>() {
+                    @Override
+                    public RuntimeException get() {
+                        throw new DataNotFoundException("Company not found");
+                    }
+                });
+    }
+
+    private Site getSite(String companyId, String siteId) {
+        return getCompany(companyId).getSite(new ObjectId(siteId))
+                .orElseThrow(new Supplier<RuntimeException>() {
+                    @Override
+                    public RuntimeException get() {
+                        throw new DataNotFoundException("Site not found");
+                    }
+                });
     }
 
     @Override
-    public List<SiteDTO> getSites(String companyId) {
-        Company company = getCompany(companyId);
-        return company.getSites().stream().map(site -> {
-            return new SiteDTO(companyId, site.getId().toString(), site.getName(), site.getSubDomain());
-        }).collect(Collectors.toCollection(ArrayList<SiteDTO>::new));
+    public List<SiteDTO> getSites(String companyId) throws DataNotFoundException {
+        return getCompany(companyId).getSites()
+                .map(sites -> {
+                    System.out.println("sites = " + sites);
+                    return companyMapper.toSiteDTOList(companyId, sites.values());
+                }).orElseThrow(new Supplier<RuntimeException>() {
+                    @Override
+                    public RuntimeException get() {
+                        throw new DataNotFoundException("No Sites found");
+                    }
+                });
     }
 
     @Override
     public List<DepartmentDTO> getDepartments(String companyId, String siteId) {
-        return getCompany(companyId).getSite(new ObjectId(siteId)).getDepartments().stream().map(dept -> {
-            return new DepartmentDTO(companyId, siteId, dept.getId().toString(), dept.getName());
-        }).collect(Collectors.toCollection(ArrayList<DepartmentDTO>::new));
+        return getSite(companyId, siteId).getDepartments()
+                .map(dep -> {
+                    return companyMapper.toDepartmentDTOList(companyId, siteId, dep.values());
+                }).orElseThrow(new Supplier<RuntimeException>() {
+                    @Override
+                    public RuntimeException get() {
+                        throw new DataNotFoundException("No Departments found");
+                    }
+                });
     }
 }

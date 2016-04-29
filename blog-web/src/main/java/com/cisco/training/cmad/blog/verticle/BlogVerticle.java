@@ -1,6 +1,7 @@
 package com.cisco.training.cmad.blog.verticle;
 
 import com.cisco.training.cmad.blog.config.BlogModule;
+import com.cisco.training.cmad.blog.dto.DepartmentDTO;
 import com.cisco.training.cmad.blog.dto.SiteDTO;
 import com.cisco.training.cmad.blog.dto.UserAuthDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
@@ -116,6 +117,7 @@ public class BlogVerticle extends AbstractVerticle {
                 List<SiteDTO> sites = companyService.getSites(companyId);
                 future.complete(sites);
             } catch(DataNotFoundException e) {
+                e.printStackTrace();
                 future.fail(e);
             }
         }, res -> {
@@ -130,6 +132,7 @@ public class BlogVerticle extends AbstractVerticle {
                             .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                             .end(res.cause().getMessage());
                 } else {
+                    res.cause().printStackTrace();
                     routingContext.response()
                             .setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
                             .end(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
@@ -141,10 +144,33 @@ public class BlogVerticle extends AbstractVerticle {
     private void getDepartments(RoutingContext routingContext) {
         String companyId = routingContext.request().getParam("companyId");
         String siteId = routingContext.request().getParam("siteId");
-        routingContext.response()
-                .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .end(Json.encodePrettily(companyService.getDepartments(companyId, siteId)));
-
+        vertx.executeBlocking(future -> {
+            try {
+                List<DepartmentDTO> departments = companyService.getDepartments(companyId, siteId);
+                future.complete(departments);
+            } catch(DataNotFoundException e) {
+                e.printStackTrace();
+                future.fail(e);
+            }
+        }, res -> {
+            if(res.succeeded()) {
+                routingContext.response()
+                        .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .setStatusCode(HttpResponseStatus.OK.code())
+                        .end(Json.encodePrettily(res.result()));
+            } else {
+                if(res.cause() instanceof DataNotFoundException) {
+                    routingContext.response()
+                            .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
+                            .end(res.cause().getMessage());
+                } else {
+                    res.cause().printStackTrace();
+                    routingContext.response()
+                            .setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
+                            .end(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
+                }
+            }
+        });
     }
 
     private void authenticateUser(RoutingContext routingContext) {

@@ -47,12 +47,12 @@ public class Site {
         return this;
     }
 
-    public Collection<Department> getDepartments() {
-        return this.departments.values();
+    public Optional<Map<ObjectId, Department>> getDepartments() {
+        return Optional.ofNullable(this.departments);
     }
 
-    public Department getDepartment(ObjectId departmentId) {
-        return this.departments.get(departmentId);
+    public Optional<Department> getDepartment(ObjectId departmentId) {
+        return Optional.ofNullable(this.departments.get(departmentId));
     }
 
 }

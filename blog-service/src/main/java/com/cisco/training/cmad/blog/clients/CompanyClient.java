@@ -1,18 +1,15 @@
 package com.cisco.training.cmad.blog.clients;
 
 import com.cisco.training.cmad.blog.config.BlogModule;
-import com.cisco.training.cmad.blog.config.MorphiaService;
-import com.cisco.training.cmad.blog.dao.CompanyDAO;
 import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.model.Department;
 import com.cisco.training.cmad.blog.model.Site;
 import com.cisco.training.cmad.blog.service.CompanyService;
-import com.cisco.training.cmad.blog.service.CompanyServiceImpl;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
-import lombok.Data;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Key;
+
+import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * Created by satkuppu on 4/23/16.
@@ -26,7 +23,7 @@ public class CompanyClient {
         Guice.createInjector(new BlogModule()).injectMembers(this);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         new CompanyClient().addCompany();
 //        System.out.println("companyService.getSites(ciscoId) = " + companyService.getSites("571d8f20d4a3fd35a649c2ec"));
 
@@ -46,21 +43,19 @@ public class CompanyClient {
     }
 
     public void addCompany() {
-        Department hrDept = new Department("HR");
-        Department salesDept = new Department("Sales");
-        Department enggDept = new Department("Engineering");
-        Site indiaSite = new Site("India").withSubDomain("in")
-                .addDepartment(hrDept)
-                .addDepartment(salesDept)
-                .addDepartment(enggDept);
+        Site indiaSite = new Site("India").withSubDomain("in");
+//                .addDepartment(hrDept)
+//                .addDepartment(salesDept)
+//                .addDepartment(enggDept);
         Site ukSite = new Site("US").withSubDomain("com")
-                .addDepartment(hrDept)
-                .addDepartment(enggDept);
-        Company softwareAG = new Company("CISCO");
+                .addDepartment(new Department("HR"))
+                .addDepartment(new Department("Engineering"));
+        Company softwareAG = new Company("Amazon");
         softwareAG.addSite(indiaSite);
-        softwareAG.addSite(ukSite);
+//        softwareAG.addSite(ukSite);
 
         String companyId = companyService.registerCompany(softwareAG);
         System.out.println("companyId = " + companyId);
     }
+
 }
