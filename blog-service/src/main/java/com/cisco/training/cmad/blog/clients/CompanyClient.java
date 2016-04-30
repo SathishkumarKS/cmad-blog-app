@@ -1,6 +1,7 @@
 package com.cisco.training.cmad.blog.clients;
 
 import com.cisco.training.cmad.blog.config.BlogModule;
+import com.cisco.training.cmad.blog.dao.CompanyDAO;
 import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.model.Department;
 import com.cisco.training.cmad.blog.model.Site;
@@ -18,6 +19,9 @@ public class CompanyClient {
 
     @Inject
     private CompanyService companyService;
+
+    @Inject
+    private CompanyDAO companyDAO;
 
     public CompanyClient() {
         Guice.createInjector(new BlogModule()).injectMembers(this);
@@ -43,18 +47,19 @@ public class CompanyClient {
     }
 
     public void addCompany() {
-        Site indiaSite = new Site("India").withSubDomain("in");
-//                .addDepartment(hrDept)
-//                .addDepartment(salesDept)
-//                .addDepartment(enggDept);
-        Site ukSite = new Site("US").withSubDomain("com")
+        Site indiaSite = new Site("India")
+                .addDepartment(new Department("HR"))
+                .addDepartment(new Department("Engineering"))
+                .addDepartment(new Department("Sales"))
+                .addDepartment(new Department("Support"));
+        Site usSite = new Site("US")
                 .addDepartment(new Department("HR"))
                 .addDepartment(new Department("Engineering"));
-        Company softwareAG = new Company("Amazon");
-        softwareAG.addSite(indiaSite);
-//        softwareAG.addSite(ukSite);
+        Company company = new Company("Flipkart").withSubDomain("com");
+        company.addSite(indiaSite);
+//        company.addSite(usSite);
 
-        String companyId = companyService.registerCompany(softwareAG);
+        String companyId = companyDAO.save(company).toString();
         System.out.println("companyId = " + companyId);
     }
 

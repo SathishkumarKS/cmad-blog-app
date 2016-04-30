@@ -30,6 +30,9 @@ public class Company {
     @Indexed(unique = true, name = "companyName")
     private String name;
 
+    @Getter
+    private String subDomain;
+
     @Embedded
     private Map<ObjectId, Site> sites;
 
@@ -46,6 +49,11 @@ public class Company {
         if(! this.sites.containsValue(site)) {
             this.sites.put(site.getId(), site);
         }
+        return this;
+    }
+
+    public Company withSubDomain(String subDomain) {
+        this.subDomain = subDomain;
         return this;
     }
 

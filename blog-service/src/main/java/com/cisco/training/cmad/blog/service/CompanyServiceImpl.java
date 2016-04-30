@@ -32,17 +32,12 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public String registerCompany(Company company) {
-        return companyDAO.save(company).toString();
-    }
-
-    @Override
-    public String registerCompany(String companyName, String siteName, String subDomain, String departmentName) {
+    public String registerCompany(String companyName, String siteName, String departmentName) {
         Department dept = new Department(departmentName);
         Site acmeSite = new Site(siteName)
-                .withSubDomain(subDomain)
                 .addDepartment(dept);
-        Company acme = new Company(companyName).addSite(acmeSite);
+        Company acme = new Company(companyName)
+                .addSite(acmeSite);
 
         try {
             return companyDAO.save(acme).toString();
@@ -57,31 +52,16 @@ public class CompanyServiceImpl implements CompanyService {
         return companyMapper.toCompanyDTOList(this.companyDAO.find().asList());
     }
 
-    private Company getCompany(String companyId) {
-        return Optional.ofNullable(companyDAO.findOne("id", new ObjectId(companyId)))
-                .orElseThrow(new Supplier<RuntimeException>() {
-                    @Override
-                    public RuntimeException get() {
-                        throw new DataNotFoundException("Company not found");
-                    }
-                });
-    }
-
-    private Site getSite(String companyId, String siteId) {
-        return getCompany(companyId).getSite(new ObjectId(siteId))
-                .orElseThrow(new Supplier<RuntimeException>() {
-                    @Override
-                    public RuntimeException get() {
-                        throw new DataNotFoundException("Site not found");
-                    }
-                });
+    private Optional<Company> getCompany(String companyId) {
+        return Optional.ofNullable(companyDAO.findOne("id", new ObjectId(companyId)));
     }
 
     @Override
     public List<SiteDTO> getSites(String companyId) throws DataNotFoundException {
-        return getCompany(companyId).getSites()
-                .map(sites -> {
-                    System.out.println("sites = " + sites);
+        return getCompany(companyId)
+                .flatMap(company -> {
+                    return company.getSites();
+                }).map(sites -> {
                     return companyMapper.toSiteDTOList(companyId, sites.values());
                 }).orElseThrow(new Supplier<RuntimeException>() {
                     @Override
@@ -93,8 +73,12 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<DepartmentDTO> getDepartments(String companyId, String siteId) {
-        return getSite(companyId, siteId).getDepartments()
-                .map(dep -> {
+        return getCompany(companyId)
+                .flatMap(company -> {
+                    return company.getSite(new ObjectId(siteId));
+                }).flatMap(site -> {
+                    return site.getDepartments();
+                }).map(dep -> {
                     return companyMapper.toDepartmentDTOList(companyId, siteId, dep.values());
                 }).orElseThrow(new Supplier<RuntimeException>() {
                     @Override

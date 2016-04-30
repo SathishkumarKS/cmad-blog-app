@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class CompanyMapper {
 
     public CompanyDTO toCompanyDTO(Company company) {
-        return new CompanyDTO(company.getId().toString(), company.getName());
+        return new CompanyDTO(company.getId().toString(), company.getName(), company.getSubDomain());
     }
 
     public List<CompanyDTO> toCompanyDTOList(List<Company> companies) {
@@ -40,6 +40,6 @@ public class CompanyMapper {
     }
 
     public SiteDTO toSiteDTO(String companyId, Site site) {
-        return new SiteDTO(companyId, site.getId().toString(), site.getName(), site.getSubDomain());
+        return new SiteDTO(companyId, site.getId().toString(), site.getName());
     }
 }

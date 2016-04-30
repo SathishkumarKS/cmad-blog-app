@@ -15,8 +15,7 @@ import java.util.Optional;
  */
 public interface CompanyService {
 
-    public String registerCompany(Company company);
-    public String registerCompany(String companyName, String siteName, String subDomain, String departmentName);
+    public String registerCompany(String companyName, String siteName, String departmentName);
     public List<CompanyDTO> getAllCompanies();
     public List<SiteDTO> getSites(String companyId) throws DataNotFoundException ;
     public List<DepartmentDTO> getDepartments(String companyId, String siteId);

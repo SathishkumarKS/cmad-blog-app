@@ -11,5 +11,4 @@ public class SiteDTO {
     private String companyId;
     private String id;
     private String siteName;
-    private String subDomain;
 }

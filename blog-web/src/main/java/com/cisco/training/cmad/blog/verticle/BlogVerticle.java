@@ -117,7 +117,6 @@ public class BlogVerticle extends AbstractVerticle {
                 List<SiteDTO> sites = companyService.getSites(companyId);
                 future.complete(sites);
             } catch(DataNotFoundException e) {
-                e.printStackTrace();
                 future.fail(e);
             }
         }, res -> {
@@ -149,7 +148,6 @@ public class BlogVerticle extends AbstractVerticle {
                 List<DepartmentDTO> departments = companyService.getDepartments(companyId, siteId);
                 future.complete(departments);
             } catch(DataNotFoundException e) {
-                e.printStackTrace();
                 future.fail(e);
             }
         }, res -> {

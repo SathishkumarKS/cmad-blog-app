@@ -19,9 +19,6 @@ public class Site {
     @Getter @Setter @NonNull
     private String name;
 
-    @Getter
-    private String subDomain;
-
     @Embedded
     private Map<ObjectId, Department> departments;
 
@@ -31,13 +28,7 @@ public class Site {
     public Site(String name) {
         this.id = new ObjectId();
         this.name = name;
-        this.subDomain = subDomain;
         this.departments = new HashMap<>();
-    }
-
-    public Site withSubDomain(String subDomain) {
-        this.subDomain = subDomain;
-        return this;
     }
 
     public Site addDepartment(Department department) {

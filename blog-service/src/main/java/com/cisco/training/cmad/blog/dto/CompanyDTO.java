@@ -10,4 +10,5 @@ import lombok.Data;
 public class CompanyDTO {
     private String id;
     private String companyName;
+    private String subDomain;
 }
