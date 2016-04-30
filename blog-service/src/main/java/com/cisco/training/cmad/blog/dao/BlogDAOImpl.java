@@ -22,7 +22,7 @@ public class BlogDAOImpl extends BasicDAO<Blog, ObjectId> implements BlogDAO  {
 
     @Override
     public List<Blog> getByTag(String tagName) {
-        return createQuery().field("tags").contains(tagName).asList();
+        return createQuery().order("-createdAt").field("tags").contains(tagName).asList();
     }
 
 }

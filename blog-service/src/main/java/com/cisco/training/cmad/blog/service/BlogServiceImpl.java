@@ -29,7 +29,7 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public List<Blog> getAllBlogs() {
-        return blogMapper.toBlogDTOList(blogDAO.find().asList());
+        return blogMapper.toBlogDTOList(blogDAO.createQuery().order("-createdAt").asList());
     }
 
     @Override
