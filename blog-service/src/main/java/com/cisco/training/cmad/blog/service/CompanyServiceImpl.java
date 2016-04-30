@@ -4,7 +4,8 @@ import com.cisco.training.cmad.blog.dao.CompanyDAO;
 import com.cisco.training.cmad.blog.dto.CompanyDTO;
 import com.cisco.training.cmad.blog.dto.DepartmentDTO;
 import com.cisco.training.cmad.blog.dto.SiteDTO;
-import com.cisco.training.cmad.blog.exception.DataNotFoundException;
+import com.cisco.training.cmad.blog.exception.CompanyAlreadyExists;
+import com.cisco.training.cmad.blog.exception.DataNotFound;
 import com.cisco.training.cmad.blog.mapper.CompanyMapper;
 import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.model.Department;
@@ -42,9 +43,8 @@ public class CompanyServiceImpl implements CompanyService {
         try {
             return companyDAO.save(acme).toString();
         } catch (DuplicateKeyException dke) {
-            System.err.println("Company already exists with same name");
+            throw new CompanyAlreadyExists("Company already exists with same name");
         }
-        return "Failure";
     }
 
     @Override
@@ -57,7 +57,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public List<SiteDTO> getSites(String companyId) throws DataNotFoundException {
+    public List<SiteDTO> getSites(String companyId) throws DataNotFound {
         return getCompany(companyId)
                 .flatMap(company -> {
                     return company.getSites();
@@ -66,7 +66,7 @@ public class CompanyServiceImpl implements CompanyService {
                 }).orElseThrow(new Supplier<RuntimeException>() {
                     @Override
                     public RuntimeException get() {
-                        throw new DataNotFoundException("No Sites found");
+                        throw new DataNotFound("No Sites found");
                     }
                 });
     }
@@ -83,7 +83,7 @@ public class CompanyServiceImpl implements CompanyService {
                 }).orElseThrow(new Supplier<RuntimeException>() {
                     @Override
                     public RuntimeException get() {
-                        throw new DataNotFoundException("No Departments found");
+                        throw new DataNotFound("No Departments found");
                     }
                 });
     }

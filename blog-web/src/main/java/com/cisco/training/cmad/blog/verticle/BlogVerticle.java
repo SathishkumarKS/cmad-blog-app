@@ -5,8 +5,8 @@ import com.cisco.training.cmad.blog.dto.DepartmentDTO;
 import com.cisco.training.cmad.blog.dto.SiteDTO;
 import com.cisco.training.cmad.blog.dto.UserAuthDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
-import com.cisco.training.cmad.blog.exception.DataNotFoundException;
-import com.cisco.training.cmad.blog.exception.UserAlreadyExistsException;
+import com.cisco.training.cmad.blog.exception.DataNotFound;
+import com.cisco.training.cmad.blog.handler.ExceptionHandler;
 import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.UserService;
 import com.google.inject.Guice;
@@ -81,25 +81,13 @@ public class BlogVerticle extends AbstractVerticle {
         String payload = routingContext.getBodyAsString();
         UserRegistrationDTO reg = Json.decodeValue(payload, UserRegistrationDTO.class);
         vertx.executeBlocking(future -> {
-            try {
-                String userId = userService.registerUser(reg);
-                future.complete(userId);
-            } catch(Throwable e) {
-                future.fail(e);
-            }
+            String userId = userService.registerUser(reg);
+            future.complete(userId);
         }, res -> {
             if(res.succeeded()) {
                 routingContext.response().setStatusCode(HttpResponseStatus.CREATED.code()).end(res.result().toString());
             } else {
-                if(res.cause() instanceof UserAlreadyExistsException) {
-                    routingContext.response()
-                            .setStatusCode(HttpResponseStatus.UNAUTHORIZED.code())
-                            .end(res.cause().getMessage());
-                } else {
-                    routingContext.response()
-                            .setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
-                            .end(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
-                }
+                ExceptionHandler.handleException(res, routingContext);
             }
         });
     }
@@ -113,12 +101,8 @@ public class BlogVerticle extends AbstractVerticle {
     private void getSites(RoutingContext routingContext) {
         String companyId = routingContext.request().getParam("companyId");
         vertx.executeBlocking(future -> {
-            try {
-                List<SiteDTO> sites = companyService.getSites(companyId);
-                future.complete(sites);
-            } catch(DataNotFoundException e) {
-                future.fail(e);
-            }
+            List<SiteDTO> sites = companyService.getSites(companyId);
+            future.complete(sites);
         }, res -> {
             if(res.succeeded()) {
                 routingContext.response()
@@ -126,16 +110,7 @@ public class BlogVerticle extends AbstractVerticle {
                         .setStatusCode(HttpResponseStatus.OK.code())
                         .end(Json.encodePrettily(res.result()));
             } else {
-                if(res.cause() instanceof DataNotFoundException) {
-                    routingContext.response()
-                            .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
-                            .end(res.cause().getMessage());
-                } else {
-                    res.cause().printStackTrace();
-                    routingContext.response()
-                            .setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
-                            .end(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
-                }
+                ExceptionHandler.handleException(res, routingContext);
             }
         });
     }
@@ -147,7 +122,7 @@ public class BlogVerticle extends AbstractVerticle {
             try {
                 List<DepartmentDTO> departments = companyService.getDepartments(companyId, siteId);
                 future.complete(departments);
-            } catch(DataNotFoundException e) {
+            } catch(DataNotFound e) {
                 future.fail(e);
             }
         }, res -> {
@@ -157,16 +132,7 @@ public class BlogVerticle extends AbstractVerticle {
                         .setStatusCode(HttpResponseStatus.OK.code())
                         .end(Json.encodePrettily(res.result()));
             } else {
-                if(res.cause() instanceof DataNotFoundException) {
-                    routingContext.response()
-                            .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
-                            .end(res.cause().getMessage());
-                } else {
-                    res.cause().printStackTrace();
-                    routingContext.response()
-                            .setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
-                            .end(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase());
-                }
+                ExceptionHandler.handleException(res, routingContext);
             }
         });
     }
