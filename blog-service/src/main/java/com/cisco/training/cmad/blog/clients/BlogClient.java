@@ -1,6 +1,7 @@
 package com.cisco.training.cmad.blog.clients;
 
 import com.cisco.training.cmad.blog.config.BlogModule;
+import com.cisco.training.cmad.blog.dao.BlogDAO;
 import com.cisco.training.cmad.blog.dto.Blog;
 import com.cisco.training.cmad.blog.service.BlogService;
 import com.google.inject.Guice;
@@ -15,9 +16,11 @@ public class BlogClient {
 
     @Inject
     BlogService blogService;
+    @Inject
+    BlogDAO blogDAO;
 
     public static void main(String[] args) {
-        new BlogClient().addBlog();
+        new BlogClient().searchByTag();
     }
 
     public BlogClient() {
@@ -34,5 +37,9 @@ public class BlogClient {
         blog.setTags("Java, Functional Programming");
 
         blogService.addBlog(blog);
+    }
+
+    public void searchByTag() {
+        System.out.println(blogService.getBlogsByTag("Java"));
     }
 }

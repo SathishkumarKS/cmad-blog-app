@@ -31,4 +31,9 @@ public class BlogServiceImpl implements BlogService {
     public List<Blog> getAllBlogs() {
         return blogMapper.toBlogDTOList(blogDAO.find().asList());
     }
+
+    @Override
+    public List<Blog> getBlogsByTag(String tagName) {
+        return blogMapper.toBlogDTOList(blogDAO.getByTag(tagName));
+    }
 }

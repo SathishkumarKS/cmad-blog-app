@@ -2,6 +2,7 @@ package com.cisco.training.cmad.blog.model;
 
 import com.cisco.training.cmad.blog.dto.Comment;
 import lombok.Getter;
+import lombok.ToString;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
@@ -13,6 +14,7 @@ import java.util.*;
  * Created by satkuppu on 4/23/16.
  */
 @Entity(value = "blogs", noClassnameStored = true)
+@ToString
 public class Blog {
     @Id @Getter
     private ObjectId id;

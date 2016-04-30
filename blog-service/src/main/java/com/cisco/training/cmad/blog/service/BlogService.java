@@ -11,4 +11,6 @@ public interface BlogService {
 
     public String addBlog(Blog blog);
     public List<Blog> getAllBlogs();
+    public List<Blog> getBlogsByTag(String tagName);
+
 }

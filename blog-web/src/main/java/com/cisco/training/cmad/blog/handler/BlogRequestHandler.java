@@ -49,7 +49,13 @@ public class BlogRequestHandler {
     }
 
     public void getBlogs(RoutingContext routingContext) {
-        List<Blog> blogList = blogService.getAllBlogs();
+        String tagName = routingContext.request().getParam("tag");
+        List<Blog> blogList;
+        if(tagName != null && !tagName.trim().isEmpty()) {
+            blogList = blogService.getBlogsByTag(tagName);
+        } else {
+            blogList = blogService.getAllBlogs();
+        }
         routingContext.response()
                 .putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .setStatusCode(HttpResponseStatus.OK.code())
