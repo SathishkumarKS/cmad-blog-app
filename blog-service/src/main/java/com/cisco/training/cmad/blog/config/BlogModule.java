@@ -1,14 +1,9 @@
 package com.cisco.training.cmad.blog.config;
 
-import com.cisco.training.cmad.blog.dao.CompanyDAO;
-import com.cisco.training.cmad.blog.dao.CompanyDAOImpl;
-import com.cisco.training.cmad.blog.dao.UserDAO;
-import com.cisco.training.cmad.blog.dao.UserDAOImpl;
+import com.cisco.training.cmad.blog.dao.*;
 import com.cisco.training.cmad.blog.mapper.CompanyMapper;
-import com.cisco.training.cmad.blog.service.CompanyService;
-import com.cisco.training.cmad.blog.service.CompanyServiceImpl;
-import com.cisco.training.cmad.blog.service.UserService;
-import com.cisco.training.cmad.blog.service.UserServiceImpl;
+import com.cisco.training.cmad.blog.mapper.UserMapper;
+import com.cisco.training.cmad.blog.service.*;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.mongodb.MongoClient;
@@ -23,9 +18,12 @@ public class BlogModule extends AbstractModule {
     protected void configure() {
         bind(CompanyService.class).to(CompanyServiceImpl.class);
         bind(UserService.class).to(UserServiceImpl.class);
+        bind(BlogService.class).to(BlogServiceImpl.class);
         bind(CompanyDAO.class).to(CompanyDAOImpl.class);
         bind(UserDAO.class).to(UserDAOImpl.class);
+        bind(BlogDAO.class).to(BlogDAOImpl.class);
         bind(CompanyMapper.class);
+        bind(UserMapper.class);
     }
 
     @Provides

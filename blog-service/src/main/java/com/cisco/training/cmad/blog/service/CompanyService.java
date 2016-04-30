@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface CompanyService {
 
-    public String registerCompany(String companyName, String siteName, String departmentName);
+    public DepartmentDTO registerCompany(String companyName, String siteName, String departmentName);
     public List<CompanyDTO> getAllCompanies();
     public List<SiteDTO> getSites(String companyId) throws DataNotFound;
     public List<DepartmentDTO> getDepartments(String companyId, String siteId);

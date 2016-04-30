@@ -32,7 +32,7 @@ public class User {
     @Getter @Setter
     private String lastName;
 
-    @Embedded
+    @Embedded @Getter
     private UserDepartment department;
 
     public User() {

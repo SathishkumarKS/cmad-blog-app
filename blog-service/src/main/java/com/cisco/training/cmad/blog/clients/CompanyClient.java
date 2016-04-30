@@ -9,8 +9,10 @@ import com.cisco.training.cmad.blog.service.CompanyService;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by satkuppu on 4/23/16.
@@ -28,7 +30,10 @@ public class CompanyClient {
     }
 
     public static void main(String[] args) throws Exception {
-        new CompanyClient().addCompany();
+//        new CompanyClient().addCompany();
+        System.out.println(Arrays.asList("Sathish,Krishnan".split("\\s*,\\s*")));
+        System.out.println(Arrays.asList("Sathish","Krishnan")
+                .stream().collect(Collectors.joining(", ")));
 //        System.out.println("companyService.getSites(ciscoId) = " + companyService.getSites("571d8f20d4a3fd35a649c2ec"));
 
 /*
@@ -50,14 +55,14 @@ public class CompanyClient {
         Site indiaSite = new Site("India")
                 .addDepartment(new Department("HR"))
                 .addDepartment(new Department("Engineering"))
-                .addDepartment(new Department("Sales"))
                 .addDepartment(new Department("Support"));
         Site usSite = new Site("US")
                 .addDepartment(new Department("HR"))
+                .addDepartment(new Department("Sales"))
                 .addDepartment(new Department("Engineering"));
-        Company company = new Company("Flipkart").withSubDomain("com");
+        Company company = new Company("CISCO").withSubDomain(".cisco.com");
         company.addSite(indiaSite);
-//        company.addSite(usSite);
+        company.addSite(usSite);
 
         String companyId = companyDAO.save(company).toString();
         System.out.println("companyId = " + companyId);

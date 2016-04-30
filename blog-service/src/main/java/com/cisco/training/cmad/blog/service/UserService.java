@@ -1,6 +1,7 @@
 package com.cisco.training.cmad.blog.service;
 
 import com.cisco.training.cmad.blog.dto.UserAuthDTO;
+import com.cisco.training.cmad.blog.dto.UserDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
 import com.cisco.training.cmad.blog.exception.UserAlreadyExists;
 
@@ -10,4 +11,5 @@ import com.cisco.training.cmad.blog.exception.UserAlreadyExists;
 public interface UserService {
     public String registerUser(UserRegistrationDTO userRegistration) throws UserAlreadyExists;
     public Boolean authenticateUser(UserAuthDTO userAuthDTO);
+    public UserDTO getUser(String userName);
 }

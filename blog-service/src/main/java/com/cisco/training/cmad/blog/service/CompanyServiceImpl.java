@@ -13,6 +13,7 @@ import com.cisco.training.cmad.blog.model.Site;
 import com.google.inject.Inject;
 import com.mongodb.DuplicateKeyException;
 import org.bson.types.ObjectId;
+import org.mongodb.morphia.Key;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,15 +34,17 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public String registerCompany(String companyName, String siteName, String departmentName) {
-        Department dept = new Department(departmentName);
-        Site acmeSite = new Site(siteName)
+    public DepartmentDTO registerCompany(String companyName, String subDomain, String deptName) {
+        Department dept = new Department(deptName);
+        Site acmeSite = new Site("Default Site")
                 .addDepartment(dept);
         Company acme = new Company(companyName)
+                .withSubDomain(subDomain)
                 .addSite(acmeSite);
 
         try {
-            return companyDAO.save(acme).toString();
+            Key<Company> companyId = companyDAO.save(acme);
+            return new DepartmentDTO(companyId.getId().toString(), acmeSite.getId().toString(), dept.getId().toString(), deptName);
         } catch (DuplicateKeyException dke) {
             throw new CompanyAlreadyExists("Company already exists with same name");
         }

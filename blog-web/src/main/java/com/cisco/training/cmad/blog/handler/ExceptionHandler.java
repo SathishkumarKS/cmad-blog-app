@@ -1,5 +1,6 @@
 package com.cisco.training.cmad.blog.handler;
 
+import com.cisco.training.cmad.blog.exception.BadRequest;
 import com.cisco.training.cmad.blog.exception.CompanyAlreadyExists;
 import com.cisco.training.cmad.blog.exception.DataNotFound;
 import com.cisco.training.cmad.blog.exception.UserAlreadyExists;
@@ -14,7 +15,8 @@ public class ExceptionHandler {
 
     public static void handleException(AsyncResult<Object> res, RoutingContext routingContext) {
         if(res.cause() instanceof UserAlreadyExists
-                || res.cause() instanceof CompanyAlreadyExists) {
+                || res.cause() instanceof CompanyAlreadyExists
+                || res.cause() instanceof BadRequest) {
             routingContext.response()
                     .setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
                     .end(res.cause().getMessage());

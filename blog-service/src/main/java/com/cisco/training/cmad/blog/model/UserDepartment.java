@@ -10,19 +10,19 @@ import org.bson.types.ObjectId;
  */
 @Data
 public class UserDepartment {
-    private ObjectId companyId;
+    private String companyId;
     private String companyName;
 
-    private ObjectId siteId;
+    private String siteId;
     private String siteName;
 
-    private ObjectId departmentId;
+    private String departmentId;
     private String departmentName;
 
     public UserDepartment() {
     }
 
-    public UserDepartment(ObjectId companyId, ObjectId siteId, ObjectId departmentId) {
+    public UserDepartment(String companyId, String siteId, String departmentId) {
         this.companyId = companyId;
         this.siteId = siteId;
         this.departmentId = departmentId;

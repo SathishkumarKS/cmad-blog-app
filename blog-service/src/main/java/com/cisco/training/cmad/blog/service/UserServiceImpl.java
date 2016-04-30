@@ -2,13 +2,15 @@ package com.cisco.training.cmad.blog.service;
 
 import com.cisco.training.cmad.blog.dao.UserDAO;
 import com.cisco.training.cmad.blog.dto.UserAuthDTO;
+import com.cisco.training.cmad.blog.dto.UserDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
+import com.cisco.training.cmad.blog.exception.DataNotFound;
 import com.cisco.training.cmad.blog.exception.UserAlreadyExists;
+import com.cisco.training.cmad.blog.mapper.UserMapper;
 import com.cisco.training.cmad.blog.model.User;
 import com.cisco.training.cmad.blog.model.UserDepartment;
 import com.google.inject.Inject;
 import com.mongodb.DuplicateKeyException;
-import org.bson.types.ObjectId;
 import org.mindrot.jbcrypt.BCrypt;
 import org.mongodb.morphia.Key;
 
@@ -18,35 +20,22 @@ import org.mongodb.morphia.Key;
 public class UserServiceImpl implements UserService {
 
     private UserDAO userDAO;
+    private UserMapper userMapper;
 
     @Inject
-    public UserServiceImpl(UserDAO userDAO) {
+    public UserServiceImpl(UserDAO userDAO, UserMapper userMapper) {
         this.userDAO = userDAO;
+        this.userMapper = userMapper;
     }
 
     @Override
     public String registerUser(UserRegistrationDTO userRegistration) throws UserAlreadyExists {
-        final String userName = userRegistration.getUserName();
-        String hashedPassword = BCrypt.hashpw(userRegistration.getPassword(), BCrypt.gensalt());
-
-        User user = new User(userName, hashedPassword, userRegistration.getEmail());
-        user.setFirstName(userRegistration.getFirst());
-        user.setLastName(userRegistration.getLast());
-
-        UserDepartment userDepartment = new UserDepartment(
-                new ObjectId(userRegistration.getCompanyId()),
-                new ObjectId(userRegistration.getSiteId()),
-                new ObjectId(userRegistration.getDeptId()));
-        userDepartment.setCompanyName(userRegistration.getCompanyName());
-        userDepartment.setSiteName(userRegistration.getSiteName());
-        userDepartment.setDepartmentName(userRegistration.getDeptName());
-
-        user.worksAtDepartment(userDepartment);
+        User user = userMapper.toUser(userRegistration);
         try {
             Key<User> userId = userDAO.save(user);
             return userId.getId().toString();
         } catch (DuplicateKeyException dke) {
-            throw new UserAlreadyExists("User with userName " + userName + " already exists");
+            throw new UserAlreadyExists("User with userName " + userRegistration.getUserName() + " already exists");
         }
     }
 
@@ -57,5 +46,14 @@ public class UserServiceImpl implements UserService {
             return Boolean.TRUE;
         else
             return Boolean.FALSE;
+    }
+
+    @Override
+    public UserDTO getUser(String userName) {
+        User user = userDAO.getByUserName(userName);
+        if(user == null) {
+            throw new DataNotFound("User with userName " + userName + " doesn't exist");
+        }
+        return userMapper.toUserDTO(user);
     }
 }
