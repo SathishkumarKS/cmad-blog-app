@@ -26,6 +26,7 @@ public class BlogMapper {
         com.cisco.training.cmad.blog.dto.Blog blogDTO = new com.cisco.training.cmad.blog.dto.Blog();
         blogDTO.setId(blog.getId().toString());
         blogDTO.setTitle(blog.getTitle());
+        blogDTO.setContent(blog.getContent());
         blogDTO.setUserFirst(blog.getUserFirst());
         blogDTO.setUserLast(blog.getUserLast());
         blogDTO.setUserId(blog.getUserId());

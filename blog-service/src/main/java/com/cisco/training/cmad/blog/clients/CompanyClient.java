@@ -30,10 +30,10 @@ public class CompanyClient {
     }
 
     public static void main(String[] args) throws Exception {
-//        new CompanyClient().addCompany();
-        System.out.println(Arrays.asList("Sathish,Krishnan".split("\\s*,\\s*")));
-        System.out.println(Arrays.asList("Sathish","Krishnan")
-                .stream().collect(Collectors.joining(", ")));
+        new CompanyClient().addCompany();
+//        System.out.println(Arrays.asList("Sathish,Krishnan".split("\\s*,\\s*")));
+//        System.out.println(Arrays.asList("Sathish","Krishnan")
+//                .stream().collect(Collectors.joining(", ")));
 //        System.out.println("companyService.getSites(ciscoId) = " + companyService.getSites("571d8f20d4a3fd35a649c2ec"));
 
 /*
