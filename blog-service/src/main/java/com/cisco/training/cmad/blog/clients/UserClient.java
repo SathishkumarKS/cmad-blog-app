@@ -1,13 +1,9 @@
 package com.cisco.training.cmad.blog.clients;
 
 import com.cisco.training.cmad.blog.config.BlogModule;
-import com.cisco.training.cmad.blog.config.MorphiaService;
-import com.cisco.training.cmad.blog.dao.UserDAO;
 import com.cisco.training.cmad.blog.dto.UserAuthDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
-import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.UserService;
-import com.cisco.training.cmad.blog.service.UserServiceImpl;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 
