@@ -50,6 +50,7 @@ public class BlogMapper {
         commentDTO.setContent(comment.getContent());
         commentDTO.setUserId(comment.getUserId());
         commentDTO.setUserFirst(comment.getUserFirst());
+        commentDTO.setUserLast(comment.getUserLast());
         commentDTO.setDate(comment.getCommentedAt());
 
         return commentDTO;
