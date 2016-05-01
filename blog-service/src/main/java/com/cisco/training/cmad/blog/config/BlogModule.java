@@ -32,7 +32,7 @@ public class BlogModule extends AbstractModule {
 
     @Provides
     Datastore getDataStore() {
-        MongoClient mongoClient = new MongoClient("173.36.55.107", 27017);
+        MongoClient mongoClient = new MongoClient("172.16.133.132", 27017);
         //create a new morphia instance
         Datastore datastore = new Morphia().createDatastore(mongoClient, "blogs");
         datastore.ensureIndexes();

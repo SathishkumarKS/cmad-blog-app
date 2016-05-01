@@ -56,6 +56,7 @@
 		$log.debug("AppHomeController...");
 		$http.get('/Services/rest/blogs').success(
 				function(data, status, headers, config) {
+                    $log.debug(data);
 					$scope.blogs = data;
 					$scope.loading = false;
 				}).error(function(data, status, headers, config) {
@@ -200,6 +201,7 @@
 			// Load sites
 			$http.get('/Services/rest/company/'+companyId+'/sites/'+siteId+'/departments').success(
 					function(data, status, headers, config) {
+                        $log.debug(data);
 						$scope.departments = data;
 						$scope.isLoadingDepts = false;
 					}).error(function(data, status, headers, config) {

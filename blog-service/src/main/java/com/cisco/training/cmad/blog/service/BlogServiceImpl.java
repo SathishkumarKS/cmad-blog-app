@@ -1,11 +1,14 @@
 package com.cisco.training.cmad.blog.service;
 
 import com.cisco.training.cmad.blog.dao.BlogDAO;
-import com.cisco.training.cmad.blog.dto.Blog;
+import com.cisco.training.cmad.blog.dto.BlogDTO;
+import com.cisco.training.cmad.blog.dto.CommentDTO;
+import com.cisco.training.cmad.blog.exception.DataNotFound;
 import com.cisco.training.cmad.blog.mapper.BlogMapper;
+import com.cisco.training.cmad.blog.model.Blog;
 import com.google.inject.Inject;
+import org.bson.types.ObjectId;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,17 +26,28 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public String addBlog(Blog blog) {
+    public String addBlog(BlogDTO blog) {
         return blogDAO.save(blogMapper.toBlog(blog)).getId().toString();
     }
 
     @Override
-    public List<Blog> getAllBlogs() {
+    public List<BlogDTO> getAllBlogs() {
         return blogMapper.toBlogDTOList(blogDAO.createQuery().order("-createdAt").asList());
     }
 
     @Override
-    public List<Blog> getBlogsByTag(String tagName) {
+    public List<BlogDTO> getBlogsByTag(String tagName) {
         return blogMapper.toBlogDTOList(blogDAO.getByTag(tagName));
+    }
+
+    @Override
+    public String addComment(CommentDTO comment) {
+        Blog blog = blogDAO.findOne("id", new ObjectId(comment.getBlogId()));
+        if(blog != null) {
+            blog.addComment(comment.getContent(), comment.getUserFirst(), comment.getUserLast(), comment.getUserId());
+            blogDAO.save(blog);
+            return "Comment added successfully";
+        }
+        throw new DataNotFound("Blog not found");
     }
 }

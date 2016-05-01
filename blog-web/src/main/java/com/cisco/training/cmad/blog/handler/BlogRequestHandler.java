@@ -1,9 +1,8 @@
 package com.cisco.training.cmad.blog.handler;
 
-import com.cisco.training.cmad.blog.dto.Blog;
-import com.cisco.training.cmad.blog.dto.DepartmentDTO;
+import com.cisco.training.cmad.blog.dto.BlogDTO;
+import com.cisco.training.cmad.blog.dto.CommentDTO;
 import com.cisco.training.cmad.blog.dto.UserDTO;
-import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
 import com.cisco.training.cmad.blog.service.BlogService;
 import com.cisco.training.cmad.blog.service.UserService;
 import com.google.inject.Inject;
@@ -13,8 +12,6 @@ import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 
 import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,7 +26,7 @@ public class BlogRequestHandler {
 
     public void addBlog(RoutingContext routingContext) {
         String payload = routingContext.getBodyAsString();
-        Blog reg = Json.decodeValue(payload, Blog.class);
+        BlogDTO reg = Json.decodeValue(payload, BlogDTO.class);
         routingContext.vertx().executeBlocking(future -> {
 
             UserDTO userDTO = userService.getUser(routingContext.session().get("id"));
@@ -50,7 +47,7 @@ public class BlogRequestHandler {
 
     public void getBlogs(RoutingContext routingContext) {
         String tagName = routingContext.request().getParam("tag");
-        List<Blog> blogList;
+        List<BlogDTO> blogList;
         if(tagName != null && !tagName.trim().isEmpty()) {
             blogList = blogService.getBlogsByTag(tagName);
         } else {
@@ -62,4 +59,24 @@ public class BlogRequestHandler {
                 .end(Json.encodePrettily(blogList));
     }
 
+    public void addComment(RoutingContext routingContext) {
+        String blogId = routingContext.request().getParam("blogId");
+        CommentDTO comment = Json.decodeValue(routingContext.getBodyAsString(), CommentDTO.class);
+        comment.setBlogId(blogId);
+        routingContext.vertx().executeBlocking(future -> {
+
+            UserDTO userDTO = userService.getUser(routingContext.session().get("id"));
+            comment.setUserFirst(userDTO.getFirst());
+            comment.setUserLast(userDTO.getLast());
+            comment.setUserId(userDTO.getId());
+
+            future.complete(blogService.addComment(comment));
+        }, res -> {
+            if(res.succeeded()) {
+                routingContext.response().setStatusCode(HttpResponseStatus.CREATED.code()).end(res.result().toString());
+            } else {
+                ExceptionHandler.handleException(res, routingContext);
+            }
+        });
+    }
 }

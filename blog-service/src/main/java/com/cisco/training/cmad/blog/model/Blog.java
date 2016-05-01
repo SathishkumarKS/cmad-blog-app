@@ -1,6 +1,5 @@
 package com.cisco.training.cmad.blog.model;
 
-import com.cisco.training.cmad.blog.dto.Comment;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.types.ObjectId;
@@ -56,7 +55,23 @@ public class Blog {
         return this;
     }
 
-    public Blog addComment() {
+    public Blog addComment(String content, String userFirst, String userLast, String userId) {
+        Comment comment = new Comment();
+        comment.setContent(content);
+        comment.setUserFirst(userFirst);
+        comment.setUserLast(userLast);
+        comment.setUserId(userId);
+        comment.setCommentedAt(new Date());
+
+        if(this.comments == null) {
+            this.comments = new ArrayList<>();
+        }
+        this.comments.add(comment);
+
         return this;
+    }
+
+    public Optional<List<Comment>> getComments() {
+        return Optional.ofNullable(this.comments);
     }
 }

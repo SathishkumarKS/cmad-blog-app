@@ -1,14 +1,14 @@
 package com.cisco.training.cmad.blog.mapper;
 
 import com.cisco.training.cmad.blog.dao.BlogDAO;
+import com.cisco.training.cmad.blog.dto.BlogDTO;
+import com.cisco.training.cmad.blog.dto.CommentDTO;
 import com.cisco.training.cmad.blog.dto.SiteDTO;
 import com.cisco.training.cmad.blog.model.Blog;
+import com.cisco.training.cmad.blog.model.Comment;
 import com.cisco.training.cmad.blog.model.Site;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -16,14 +16,14 @@ import java.util.stream.Collectors;
  */
 public class BlogMapper {
 
-    public Blog toBlog(com.cisco.training.cmad.blog.dto.Blog blogDTO) {
-        return new com.cisco.training.cmad.blog.model.Blog(blogDTO.getTitle(), blogDTO.getContent(),
-                        blogDTO.getUserFirst(), blogDTO.getUserLast(), blogDTO.getUserId())
-                        .withTags(Arrays.asList(blogDTO.getTags().split("\\s*,\\s*")));
+    public Blog toBlog(BlogDTO blogDTO) {
+        return new Blog(blogDTO.getTitle(), blogDTO.getContent(),
+                blogDTO.getUserFirst(), blogDTO.getUserLast(), blogDTO.getUserId())
+                .withTags(Arrays.asList(blogDTO.getTags().split("\\s*,\\s*")));
     }
 
-    public com.cisco.training.cmad.blog.dto.Blog toBlogDTO(Blog blog) {
-        com.cisco.training.cmad.blog.dto.Blog blogDTO = new com.cisco.training.cmad.blog.dto.Blog();
+    public BlogDTO toBlogDTO(Blog blog) {
+        BlogDTO blogDTO = new BlogDTO();
         blogDTO.setId(blog.getId().toString());
         blogDTO.setTitle(blog.getTitle());
         blogDTO.setContent(blog.getContent());
@@ -31,17 +31,33 @@ public class BlogMapper {
         blogDTO.setUserLast(blog.getUserLast());
         blogDTO.setUserId(blog.getUserId());
         blogDTO.setDate(blog.getCreatedAt());
-        blogDTO.setComments(blog.getComments());
+        blogDTO.setComments(toCommentDTOList(blog, blog.getComments().orElseGet(ArrayList::new)));
         blogDTO.setTags(blog.getTags()
-                        .stream().collect(Collectors.joining(", ")));
+                .stream().collect(Collectors.joining(", ")));
 
         return blogDTO;
     }
 
-    public List<com.cisco.training.cmad.blog.dto.Blog> toBlogDTOList(List<Blog> blogList) {
+    public List<BlogDTO> toBlogDTOList(List<Blog> blogList) {
         return blogList.stream().map(blog -> {
             return toBlogDTO(blog);
-        }).collect(Collectors.toCollection(ArrayList<com.cisco.training.cmad.blog.dto.Blog>::new));
+        }).collect(Collectors.toCollection(ArrayList<BlogDTO>::new));
     }
 
+    public CommentDTO toCommentDTO(Blog blog, Comment comment) {
+        CommentDTO commentDTO = new CommentDTO();
+        commentDTO.setBlogId(blog.getId().toString());
+        commentDTO.setContent(comment.getContent());
+        commentDTO.setUserId(comment.getUserId());
+        commentDTO.setUserFirst(comment.getUserFirst());
+        commentDTO.setDate(comment.getCommentedAt());
+
+        return commentDTO;
+    }
+
+    public List<CommentDTO> toCommentDTOList(Blog blog, List<Comment> comments) {
+        return comments.stream().map(comment -> {
+            return toCommentDTO(blog, comment);
+        }).collect(Collectors.toList());
+    }
 }

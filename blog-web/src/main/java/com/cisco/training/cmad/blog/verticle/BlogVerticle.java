@@ -70,6 +70,7 @@ public class BlogVerticle extends AbstractVerticle {
         router.post("/Services/rest/user/register").handler(userRequestHandler::registerUser);
         router.post("/Services/rest/user/auth").handler(userRequestHandler::authenticateUser);
         router.post("/Services/rest/blogs").handler(blogRequestHandler::addBlog);
+        router.post("/Services/rest/blogs/:blogId/comments").handler(blogRequestHandler::addComment);
 
         router.route().handler(StaticHandler.create().setCachingEnabled(true)::handle);
 

@@ -1,6 +1,7 @@
 package com.cisco.training.cmad.blog.service;
 
-import com.cisco.training.cmad.blog.dto.Blog;
+import com.cisco.training.cmad.blog.dto.BlogDTO;
+import com.cisco.training.cmad.blog.dto.CommentDTO;
 
 import java.util.List;
 
@@ -9,8 +10,9 @@ import java.util.List;
  */
 public interface BlogService {
 
-    public String addBlog(Blog blog);
-    public List<Blog> getAllBlogs();
-    public List<Blog> getBlogsByTag(String tagName);
+    public String addBlog(BlogDTO blog);
+    public List<BlogDTO> getAllBlogs();
+    public List<BlogDTO> getBlogsByTag(String tagName);
+    public String addComment(CommentDTO comment);
 
 }

@@ -9,7 +9,7 @@ import java.util.List;
  * Created by satkuppu on 30/04/16.
  */
 @Data
-public class Blog {
+public class BlogDTO {
     // {"content":"Java 8 is awesome...","title":"Java 8 is awesome","tags":"Java"}
 
     private String id;
@@ -20,5 +20,5 @@ public class Blog {
     private String userLast;
     private String userId;
     private Date date;
-    private List<Comment> comments;
+    private List<CommentDTO> comments;
 }

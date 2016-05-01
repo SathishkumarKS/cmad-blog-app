@@ -1,14 +1,17 @@
 package com.cisco.training.cmad.blog.dto;
 
 import lombok.Data;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.Date;
 
 /**
  * Created by satkuppu on 30/04/16.
  */
-@Data
-public class Comment {
+@Data @ToString
+public class CommentDTO {
+    private String blogId;
     private String content;
     private String userFirst;
     private String userLast;
