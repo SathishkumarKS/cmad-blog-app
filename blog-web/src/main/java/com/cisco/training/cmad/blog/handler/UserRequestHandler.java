@@ -1,9 +1,6 @@
 package com.cisco.training.cmad.blog.handler;
 
-import com.cisco.training.cmad.blog.dto.DepartmentDTO;
-import com.cisco.training.cmad.blog.dto.UserAuthDTO;
-import com.cisco.training.cmad.blog.dto.UserDTO;
-import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
+import com.cisco.training.cmad.blog.dto.*;
 import com.cisco.training.cmad.blog.exception.BadRequest;
 import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.UserService;
@@ -61,11 +58,11 @@ public class UserRequestHandler {
         UserRegistrationDTO reg = Json.decodeValue(payload, UserRegistrationDTO.class);
         routingContext.vertx().executeBlocking(future -> {
             if(reg.getIsCompany()) {
-                DepartmentDTO departmentDTO =
+                CompanyRegistrationStatusDTO companyRegistrationStatusDTO =
                         companyService.registerCompany(reg.getCompanyName(), reg.getSubdomain(), reg.getDeptName());
-                reg.setCompanyId(departmentDTO.getCompanyId());
-                reg.setSiteId(departmentDTO.getSiteId());
-                reg.setDeptId(departmentDTO.getId());
+                reg.setCompanyId(companyRegistrationStatusDTO.getCompanyId());
+                reg.setSiteId(companyRegistrationStatusDTO.getSiteId());
+                reg.setDeptId(companyRegistrationStatusDTO.getDeptId());
             }
             String userId = userService.registerUser(reg);
             future.complete(userId);

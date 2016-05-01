@@ -201,7 +201,6 @@
 			// Load sites
 			$http.get('/Services/rest/company/'+companyId+'/sites/'+siteId+'/departments').success(
 					function(data, status, headers, config) {
-                        $log.debug(data);
 						$scope.departments = data;
 						$scope.isLoadingDepts = false;
 					}).error(function(data, status, headers, config) {

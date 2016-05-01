@@ -32,7 +32,7 @@ public class Blog {
     private String userId;
     @Getter
     private Date createdAt;
-    @Embedded @Getter
+    @Embedded
     private List<Comment> comments;
 
     public Blog() {

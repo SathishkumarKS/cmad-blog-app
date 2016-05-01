@@ -2,6 +2,7 @@ package com.cisco.training.cmad.blog.service;
 
 import com.cisco.training.cmad.blog.dao.CompanyDAO;
 import com.cisco.training.cmad.blog.dto.CompanyDTO;
+import com.cisco.training.cmad.blog.dto.CompanyRegistrationStatusDTO;
 import com.cisco.training.cmad.blog.dto.DepartmentDTO;
 import com.cisco.training.cmad.blog.dto.SiteDTO;
 import com.cisco.training.cmad.blog.exception.CompanyAlreadyExists;
@@ -14,7 +15,9 @@ import com.google.inject.Inject;
 import com.mongodb.DuplicateKeyException;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
+import org.mongodb.morphia.query.QueryResults;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -34,17 +37,16 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     @Override
-    public DepartmentDTO registerCompany(String companyName, String subDomain, String deptName) {
+    public CompanyRegistrationStatusDTO registerCompany(String companyName, String subDomain, String deptName) {
         Department dept = new Department(deptName);
         Site acmeSite = new Site("Default Site")
                 .addDepartment(dept);
         Company acme = new Company(companyName)
                 .withSubDomain(subDomain)
                 .addSite(acmeSite);
-
         try {
             Key<Company> companyId = companyDAO.save(acme);
-            return new DepartmentDTO(companyId.getId().toString(), acmeSite.getId().toString(), dept.getId().toString(), deptName);
+            return new CompanyRegistrationStatusDTO(companyId.getId().toString(), acmeSite.getId().toString(), dept.getId().toString(), deptName);
         } catch (DuplicateKeyException dke) {
             throw new CompanyAlreadyExists("Company already exists with same name");
         }
@@ -52,7 +54,11 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<CompanyDTO> getAllCompanies() {
-        return companyMapper.toCompanyDTOList(this.companyDAO.find().asList());
+        final QueryResults<Company> companies = this.companyDAO.find();
+        if(companies != null) {
+            return companyMapper.toCompanyDTOList(companies.asList());
+        }
+        throw new DataNotFound("No Companies found");
     }
 
     private Optional<Company> getCompany(String companyId) {
