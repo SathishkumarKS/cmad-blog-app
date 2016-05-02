@@ -2,7 +2,6 @@ package com.cisco.training.cmad.blog.dto;
 
 import lombok.Data;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 
 import java.util.Date;
 

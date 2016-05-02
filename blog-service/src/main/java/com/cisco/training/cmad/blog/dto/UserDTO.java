@@ -1,6 +1,5 @@
 package com.cisco.training.cmad.blog.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**

@@ -1,9 +1,7 @@
 package com.cisco.training.cmad.blog.mapper;
 
-import com.cisco.training.cmad.blog.dto.CompanyDTO;
 import com.cisco.training.cmad.blog.dto.UserDTO;
 import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
-import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.model.User;
 import com.cisco.training.cmad.blog.model.UserDepartment;
 import org.mindrot.jbcrypt.BCrypt;

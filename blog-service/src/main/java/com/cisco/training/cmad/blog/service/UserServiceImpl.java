@@ -8,7 +8,6 @@ import com.cisco.training.cmad.blog.exception.DataNotFound;
 import com.cisco.training.cmad.blog.exception.UserAlreadyExists;
 import com.cisco.training.cmad.blog.mapper.UserMapper;
 import com.cisco.training.cmad.blog.model.User;
-import com.cisco.training.cmad.blog.model.UserDepartment;
 import com.google.inject.Inject;
 import com.mongodb.DuplicateKeyException;
 import org.mindrot.jbcrypt.BCrypt;

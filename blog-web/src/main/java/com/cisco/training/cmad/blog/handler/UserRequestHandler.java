@@ -1,6 +1,9 @@
 package com.cisco.training.cmad.blog.handler;
 
-import com.cisco.training.cmad.blog.dto.*;
+import com.cisco.training.cmad.blog.dto.CompanyRegistrationStatusDTO;
+import com.cisco.training.cmad.blog.dto.UserAuthDTO;
+import com.cisco.training.cmad.blog.dto.UserDTO;
+import com.cisco.training.cmad.blog.dto.UserRegistrationDTO;
 import com.cisco.training.cmad.blog.exception.BadRequest;
 import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.UserService;

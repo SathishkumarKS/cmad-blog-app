@@ -3,8 +3,6 @@ package com.cisco.training.cmad.blog.model;
 import lombok.*;
 import org.bson.types.ObjectId;
 
-import java.util.UUID;
-
 /**
  * Created by satkuppu on 4/23/16.
  */

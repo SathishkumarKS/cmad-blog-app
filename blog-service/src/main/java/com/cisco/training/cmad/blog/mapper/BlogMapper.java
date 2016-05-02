@@ -1,14 +1,13 @@
 package com.cisco.training.cmad.blog.mapper;
 
-import com.cisco.training.cmad.blog.dao.BlogDAO;
 import com.cisco.training.cmad.blog.dto.BlogDTO;
 import com.cisco.training.cmad.blog.dto.CommentDTO;
-import com.cisco.training.cmad.blog.dto.SiteDTO;
 import com.cisco.training.cmad.blog.model.Blog;
 import com.cisco.training.cmad.blog.model.Comment;
-import com.cisco.training.cmad.blog.model.Site;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**

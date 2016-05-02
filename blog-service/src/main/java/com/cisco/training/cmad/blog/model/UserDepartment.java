@@ -1,9 +1,6 @@
 package com.cisco.training.cmad.blog.model;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.bson.types.ObjectId;
 
 /**
  * Created by satkuppu on 25/04/16.
