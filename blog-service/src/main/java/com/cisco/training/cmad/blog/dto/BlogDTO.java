@@ -1,6 +1,8 @@
 package com.cisco.training.cmad.blog.dto;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.List;
@@ -10,7 +12,6 @@ import java.util.List;
  */
 @Data
 public class BlogDTO {
-    // {"content":"Java 8 is awesome...","title":"Java 8 is awesome","tags":"Java"}
 
     private String id;
     private String content;
@@ -21,4 +22,5 @@ public class BlogDTO {
     private String userId;
     private Date date;
     private List<CommentDTO> comments;
+
 }

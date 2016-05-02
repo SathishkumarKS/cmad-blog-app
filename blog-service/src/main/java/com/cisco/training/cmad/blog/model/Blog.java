@@ -15,14 +15,13 @@ import java.util.*;
 @Entity(value = "blogs", noClassnameStored = true)
 @ToString
 public class Blog {
-    @Id @Getter
+    @Id
     private ObjectId id;
 
     @Getter
     private String title;
     @Getter
     private String content;
-    @Getter
     private Set<String> tags;
     @Getter
     private String userFirst;
@@ -51,6 +50,9 @@ public class Blog {
     }
 
     public Blog withTags(List<String> tags) {
+        if(this.tags == null) {
+            this.tags = new HashSet<>();
+        }
         this.tags.addAll(tags);
         return this;
     }
@@ -73,5 +75,13 @@ public class Blog {
 
     public Optional<List<Comment>> getComments() {
         return Optional.ofNullable(this.comments);
+    }
+
+    public Optional<Set<String>> getTags() {
+        return Optional.ofNullable(this.tags);
+    }
+
+    public String getId() {
+        return id != null ? id.toString() : "";
     }
 }

@@ -23,4 +23,18 @@ public class BlogDAOImpl extends BasicDAO<Blog, ObjectId> implements BlogDAO  {
         return createQuery().order("-createdAt").field("tags").containsIgnoreCase(tagName).asList();
     }
 
+    @Override
+    public List<Blog> getAllBlogs() {
+        return createQuery().order("-createdAt").asList();
+    }
+
+    @Override
+    public String saveBlog(Blog blog) {
+        return save(blog).getId().toString();
+    }
+
+    @Override
+    public Blog getBlog(String blogId) {
+        return findOne("id", new ObjectId(blogId));
+    }
 }

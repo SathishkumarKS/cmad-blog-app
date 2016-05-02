@@ -1,7 +1,6 @@
 package com.cisco.training.cmad.blog.config;
 
 import com.cisco.training.cmad.blog.dao.*;
-import com.cisco.training.cmad.blog.mapper.BlogMapper;
 import com.cisco.training.cmad.blog.mapper.CompanyMapper;
 import com.cisco.training.cmad.blog.mapper.UserMapper;
 import com.cisco.training.cmad.blog.service.*;
@@ -27,7 +26,6 @@ public class BlogModule extends AbstractModule {
 
         bind(CompanyMapper.class);
         bind(UserMapper.class);
-        bind(BlogMapper.class);
     }
 
     @Provides
