@@ -13,6 +13,9 @@ import io.vertx.ext.web.RoutingContext;
  */
 public class ExceptionHandler {
 
+    private ExceptionHandler() {
+    }
+
     public static void handleException(AsyncResult<Object> res, RoutingContext routingContext) {
         if(res.cause() instanceof UserAlreadyExists
                 || res.cause() instanceof CompanyAlreadyExists
@@ -25,7 +28,6 @@ public class ExceptionHandler {
                     .setStatusCode(HttpResponseStatus.NOT_FOUND.code())
                     .end(res.cause().getMessage());
         } else {
-            res.cause().printStackTrace();
             routingContext.response()
                     .setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code())
                     .end(HttpResponseStatus.INTERNAL_SERVER_ERROR.reasonPhrase());

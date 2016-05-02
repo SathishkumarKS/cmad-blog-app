@@ -1,37 +1,20 @@
 package com.cisco.training.cmad.blog.verticle;
 
-import com.cisco.training.cmad.blog.config.BlogModule;
-import com.cisco.training.cmad.blog.dto.*;
-import com.cisco.training.cmad.blog.exception.BadRequest;
-import com.cisco.training.cmad.blog.exception.DataNotFound;
 import com.cisco.training.cmad.blog.handler.BlogRequestHandler;
 import com.cisco.training.cmad.blog.handler.CompanyRequestHandler;
-import com.cisco.training.cmad.blog.handler.ExceptionHandler;
 import com.cisco.training.cmad.blog.handler.UserRequestHandler;
-import com.cisco.training.cmad.blog.service.CompanyService;
-import com.cisco.training.cmad.blog.service.UserService;
 import com.cisco.training.cmad.blog.web.module.BlogWebModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
-import io.vertx.core.http.HttpHeaders;
-import io.vertx.core.json.Json;
-import io.vertx.ext.web.Cookie;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CookieHandler;
 import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.sstore.LocalSessionStore;
-
-import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by satkuppu on 4/25/16.
