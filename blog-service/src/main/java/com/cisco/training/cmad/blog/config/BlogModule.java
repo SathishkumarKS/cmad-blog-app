@@ -6,7 +6,6 @@ import com.cisco.training.cmad.blog.mapper.UserMapper;
 import com.cisco.training.cmad.blog.service.*;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Scope;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;

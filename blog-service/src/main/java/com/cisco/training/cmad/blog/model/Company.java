@@ -1,7 +1,6 @@
 package com.cisco.training.cmad.blog.model;
 
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import org.bson.types.ObjectId;
@@ -24,7 +23,7 @@ public class Company {
     @Id @Getter
     private ObjectId id;
 
-    @Getter @Setter @NonNull
+    @Getter @Setter
     private String name;
 
     @Getter

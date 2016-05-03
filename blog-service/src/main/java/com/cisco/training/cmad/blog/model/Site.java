@@ -1,6 +1,9 @@
 package com.cisco.training.cmad.blog.model;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Embedded;
 
@@ -18,7 +21,7 @@ public class Site {
     @Getter
     private ObjectId id;
 
-    @Getter @Setter @NonNull
+    @Getter @Setter
     private String name;
 
     @Embedded
