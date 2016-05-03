@@ -56,8 +56,13 @@ public class Company {
         return Optional.ofNullable(this.sites);
     }
 
-    public Optional<Site> getSite(ObjectId siteId) {
-        return Optional.ofNullable(this.sites.get(siteId));
+    public Optional<Site> getSite(String siteId) {
+        return Optional.ofNullable(this.sites.get(new ObjectId(siteId)));
     }
+
+    public String getId() {
+        return id != null ? id.toString() : "";
+    }
+
 
 }

@@ -1,7 +1,6 @@
 package com.cisco.training.cmad.blog.config;
 
 import com.cisco.training.cmad.blog.dao.*;
-import com.cisco.training.cmad.blog.mapper.CompanyMapper;
 import com.cisco.training.cmad.blog.mapper.UserMapper;
 import com.cisco.training.cmad.blog.service.*;
 import com.google.inject.AbstractModule;
@@ -24,7 +23,6 @@ public class BlogModule extends AbstractModule {
         bind(UserDAO.class).to(UserDAOImpl.class);
         bind(BlogDAO.class).to(BlogDAOImpl.class);
 
-        bind(CompanyMapper.class);
         bind(UserMapper.class);
     }
 

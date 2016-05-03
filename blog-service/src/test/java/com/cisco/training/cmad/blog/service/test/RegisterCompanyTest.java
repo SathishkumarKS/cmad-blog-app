@@ -3,18 +3,17 @@ package com.cisco.training.cmad.blog.service.test;
 import com.cisco.training.cmad.blog.dao.CompanyDAO;
 import com.cisco.training.cmad.blog.dto.CompanyRegistrationStatusDTO;
 import com.cisco.training.cmad.blog.exception.CompanyAlreadyExists;
-import com.cisco.training.cmad.blog.mapper.CompanyMapper;
 import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.model.Site;
 import com.cisco.training.cmad.blog.service.CompanyService;
 import com.cisco.training.cmad.blog.service.CompanyServiceImpl;
-import com.mongodb.DuplicateKeyException;
-import org.bson.types.ObjectId;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mongodb.morphia.Key;
 
 import java.util.Collection;
 
@@ -30,14 +29,12 @@ public class RegisterCompanyTest {
     private CompanyDAO companyDAOStub;
 
     @InjectMocks
-    private CompanyService companyService = new CompanyServiceImpl(companyDAOStub, new CompanyMapper());
+    private CompanyService companyService = new CompanyServiceImpl(companyDAOStub);
 
     @Test
     public void whenCompanyRegistrationIsSuccessful_ShouldReturnTheIdInResponse() {
-        Key<Company> companyKeyStub = Mockito.mock(Key.class);
-        BDDMockito.when(companyKeyStub.getId()).thenReturn(new ObjectId());
 
-        Mockito.when(companyDAOStub.save(Mockito.any())).thenReturn(companyKeyStub);
+        Mockito.when(companyDAOStub.saveCompany(Mockito.any())).thenReturn("123");
 
         CompanyRegistrationStatusDTO result = companyService.registerCompany("CISCO",".cisco.com","IT");
 
@@ -49,11 +46,9 @@ public class RegisterCompanyTest {
 
     @Test
     public void whenCompanyIsRegistered_ShouldCreateCompanySiteAndDeparment() {
-        Key<Company> companyKeyStub = Mockito.mock(Key.class);
-        BDDMockito.when(companyKeyStub.getId()).thenReturn(new ObjectId());
 
         ArgumentCaptor<Company> argument = ArgumentCaptor.forClass(Company.class);
-        Mockito.when(companyDAOStub.save(argument.capture())).thenReturn(companyKeyStub);
+        Mockito.when(companyDAOStub.saveCompany(argument.capture())).thenReturn("123");
 
         companyService.registerCompany("CISCO",".cisco.com","IT");
 
@@ -75,10 +70,18 @@ public class RegisterCompanyTest {
 
     @Test(expected = CompanyAlreadyExists.class)
     public void whenCompanyWithSameNameExists_ShouldThrowCompanyAlreadyExists() {
-        Company companyStub = Mockito.mock(Company.class);
-        Mockito.when(companyDAOStub.save(Mockito.any())).thenThrow(Mockito.mock(DuplicateKeyException.class));
+        Mockito.when(companyDAOStub.saveCompany(Mockito.any())).thenThrow(new CompanyAlreadyExists("Company already exists", null));
 
         companyService.registerCompany("CISCO",".cisco.com","IT");
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void whenCompanyNameIsNull_ShouldThrowIlegalArgumentException() {
+        companyService.registerCompany(null,".cisco.com","IT");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void whenDepartmentNameIsNull_ShouldThrowIlegalArgumentException() {
+        companyService.registerCompany("CISCO",".cisco.com",null);
     }
 }
