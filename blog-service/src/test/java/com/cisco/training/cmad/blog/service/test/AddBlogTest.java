@@ -29,6 +29,7 @@ public class AddBlogTest {
 
         BlogDTO blogDTO = new BlogDTO();
         blogDTO.setContent("Test blog");
+        blogDTO.setTags("Java, Vertx");
 
         String blogId = blogService.addBlog(blogDTO);
 

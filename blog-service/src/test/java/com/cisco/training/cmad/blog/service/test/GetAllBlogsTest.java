@@ -29,7 +29,9 @@ public class GetAllBlogsTest {
 
     @Test
     public void whenBlogsExist_ShouldReturnListOfBlogs() {
-        List<Blog> blogs = Arrays.asList(new Blog());
+        List<Blog> blogs = Arrays.asList(new Blog()
+                .withTags(Arrays.asList("Java","Vertx"))
+                .addComment("123","123","!23","!23"));
 
         Mockito.when(blogDAOStub.getAllBlogs()).thenReturn(blogs);
 
