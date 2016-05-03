@@ -12,6 +12,7 @@ import com.cisco.training.cmad.blog.model.Company;
 import com.cisco.training.cmad.blog.model.Department;
 import com.cisco.training.cmad.blog.model.Site;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.mongodb.DuplicateKeyException;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Key;
@@ -24,6 +25,7 @@ import java.util.function.Supplier;
 /**
  * Created by satkuppu on 4/24/16.
  */
+@Singleton
 public class CompanyServiceImpl implements CompanyService {
 
     private CompanyDAO companyDAO;
@@ -47,7 +49,7 @@ public class CompanyServiceImpl implements CompanyService {
             Key<Company> companyId = companyDAO.save(acme);
             return new CompanyRegistrationStatusDTO(companyId.getId().toString(), acmeSite.getId().toString(), dept.getId().toString(), deptName);
         } catch (DuplicateKeyException dke) {
-            throw new CompanyAlreadyExists("Company already exists with same name");
+            throw new CompanyAlreadyExists("Company already exists with same name", dke);
         }
     }
 

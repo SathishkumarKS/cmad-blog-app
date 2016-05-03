@@ -8,6 +8,7 @@ import com.cisco.training.cmad.blog.model.Blog;
 import com.cisco.training.cmad.blog.model.Comment;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 /**
  * Created by satkuppu on 30/04/16.
  */
+@Singleton
 public class BlogServiceImpl implements BlogService {
 
     private BlogDAO blogDAO;

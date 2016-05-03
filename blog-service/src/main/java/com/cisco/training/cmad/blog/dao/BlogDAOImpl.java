@@ -2,6 +2,7 @@ package com.cisco.training.cmad.blog.dao;
 
 import com.cisco.training.cmad.blog.model.Blog;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.dao.BasicDAO;
@@ -11,6 +12,7 @@ import java.util.List;
 /**
  * Created by satkuppu on 30/04/16.
  */
+@Singleton
 public class BlogDAOImpl extends BasicDAO<Blog, ObjectId> implements BlogDAO  {
 
     @Inject

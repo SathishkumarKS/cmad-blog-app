@@ -5,10 +5,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Embedded;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
-import org.mongodb.morphia.annotations.Indexed;
+import org.mongodb.morphia.annotations.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +15,9 @@ import java.util.Optional;
  * Created by satkuppu on 4/23/16.
  */
 @Entity(value = "companies", noClassnameStored=true)
+@Indexes({
+        @Index(fields = {@Field("name")}, options = @IndexOptions(unique = true))
+})
 @ToString
 public class Company {
 
@@ -25,7 +25,6 @@ public class Company {
     private ObjectId id;
 
     @Getter @Setter @NonNull
-    @Indexed(unique = true, name = "companyName")
     private String name;
 
     @Getter

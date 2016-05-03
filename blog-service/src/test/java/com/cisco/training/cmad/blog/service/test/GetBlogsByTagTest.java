@@ -35,7 +35,6 @@ public class GetBlogsByTagTest {
         List<BlogDTO> blogs = blogService.getBlogsByTag("Java");
 
         Assert.assertEquals(blogs.get(0).getTags(), "");
-
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.cisco.training.cmad.blog.mapper.UserMapper;
 import com.cisco.training.cmad.blog.service.*;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.google.inject.Scope;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
@@ -30,10 +31,10 @@ public class BlogModule extends AbstractModule {
 
     @Provides
     Datastore getDataStore() {
-        MongoClient mongoClient = new MongoClient("172.16.133.132", 27017);
+        MongoClient mongoClient = new MongoClient("10.104.194.132", 27017);
         //create a new morphia instance
         Datastore datastore = new Morphia().createDatastore(mongoClient, "blogs");
-        datastore.ensureIndexes();
+        datastore.ensureIndexes(true);
         return datastore;
     }
 }

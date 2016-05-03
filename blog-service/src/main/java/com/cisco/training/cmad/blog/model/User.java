@@ -4,14 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import org.bson.types.ObjectId;
-import org.mongodb.morphia.annotations.Embedded;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.Id;
+import org.mongodb.morphia.annotations.*;
 
 /**
  * Created by satkuppu on 4/23/16.
  */
 @Entity(value = "users", noClassnameStored=true)
+@Indexes({
+        @Index(fields = {@Field("userName")}, options = @IndexOptions(unique = true))
+})
 @ToString
 public class User {
     @Id @Getter
